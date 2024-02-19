@@ -1,9 +1,9 @@
 # [Team Name]
 ## Scrum Master
-[Team Member 1]
+Andreas Lambropoulos
 ## Product Owner
-[Team Member 2]
+Gerardo Rodriguez
 ## Developer
-- [Team Member 3]
-- [Team Member 4]
-- [Team Member 5]
+- Teja Swaroop Sayya
+- Jayawanth Rayakota Harnath
+- Sai Prakash Reddy Nallapareddy
