@@ -1,4 +1,4 @@
-# [Team Name]
+# Group 11
 ## Scrum Master
 Andreas Lambropoulos
 ## Product Owner
