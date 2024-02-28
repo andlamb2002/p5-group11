@@ -1,32 +1,65 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
-  Typography
+  Typography,
+  Card,
+  CardContent,
+  CardMedia,
 } from '@mui/material';
-import './userPhotos.css';
 
-
-/**
- * Define UserPhotos, a React componment of project #5
- */
 class UserPhotos extends React.Component {
-  constructor(props) {
-    super(props);
-
-  }
-
   render() {
-    return (
-      <Typography variant="body1">
-      This should be the UserPhotos view of the PhotoShare app. Since
-      it is invoked from React Router the params from the route will be
-      in property match. So this should show details of user:
-      {this.props.match.params.userId}. You can fetch the model for the user from
-      window.models.photoOfUserModel(userId):
-        <Typography variant="caption">
-          {JSON.stringify(window.models.photoOfUserModel(this.props.match.params.userId))}
-        </Typography>
-      </Typography>
+    const userId = this.props.match.params.userId;
+    const photos = window.models.photoOfUserModel(userId);
+    const user = window.models.userModel(userId);
 
+    return (
+      <div>
+        <Typography variant="h4">Photos</Typography>
+        
+        {photos.map(photo => (
+          <Card key={photo._id} style={{ marginBottom: '20px' }}>
+
+            <Typography variant="body1">
+              Name: {user.first_name} {user.last_name}<br />
+              Uploaded: {photo.date_time}<br />
+            </Typography>
+            
+            <CardMedia
+              component="img"
+              height="100%"
+              image={`/images/${photo.file_name}`}
+              alt={`Photo ${photo._id}`}
+              style={{objectFit: 'cover', width: '50%', height: '50%', background:  '#F7FF41'}}
+            />
+            <CardContent>
+              
+              {photo.comments && photo.comments.length > 0 ? (
+                <div>
+                  <Typography variant="h5">Comments:</Typography>
+                  {photo.comments.map(comment => (
+                    <div key={comment._id}>
+                      <Typography variant="body1">
+                        
+
+                        <Link to={`/users/${comment.user._id}`}>
+                          {comment.user.first_name} {comment.user.last_name}
+                        </Link> &#160;
+                        ( {comment.date_time} ): &#160; 
+                        {comment.comment}
+                        <br />
+                        
+                      </Typography>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <Typography variant="body1">No comments for this photo.</Typography>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     );
   }
 }

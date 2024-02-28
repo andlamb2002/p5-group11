@@ -1,9 +1,9 @@
 # Group 11
-## Scrum Master
+## Scrum Master:
 Andreas Lambropoulos
-## Product Owner
+## Product Owner:
 Gerardo Rodriguez
-## Developer
+## Developers:
 - Teja Swaroop Sayya
 - Jayawanth Rayakota Harnath
 - Sai Prakash Reddy Nallapareddy
