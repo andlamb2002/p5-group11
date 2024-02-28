@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   Divider,
   List,
@@ -18,6 +19,8 @@ class UserList extends React.Component {
   }
 
   render() {
+    const users = window.models.userListModel();
+
     return (
       <div>
         <Typography variant="body1">
@@ -26,18 +29,15 @@ class UserList extends React.Component {
           display your users like so:
         </Typography>
         <List component="nav">
-          <ListItem>
-            <ListItemText primary="Item #1" />
-          </ListItem>
-          <Divider />
-          <ListItem>
-            <ListItemText primary="Item #2" />
-          </ListItem>
-          <Divider />
-          <ListItem>
-            <ListItemText primary="Item #3" />
-          </ListItem>
-          <Divider />
+          {users.map((user) => (
+            <React.Fragment key={user._id}>
+              <ListItem component={Link} to={`/users/${user._id}`}>
+                <ListItemText primary={`${user.first_name} ${user.last_name}`} />
+              </ListItem>
+              <Divider />
+            </React.Fragment>
+          ))}
+          
         </List>
         <Typography variant="body1">
           The model comes in from window.models.userListModel()
