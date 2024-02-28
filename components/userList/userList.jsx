@@ -46,6 +46,13 @@ class UserList extends React.Component {
     //         });
     // }
 
+    handleUserListChange(){
+        const userList = window.models.userListModel();
+        this.setState({
+            users: userList
+        });
+           }
+
     render() {
       return this.state.users ?(
           <div>
