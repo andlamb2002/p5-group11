@@ -1,0 +1,76 @@
+.layout-container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    background-color: #34495e;
+    color: #ffffff;
+    padding: 20px;
+    width: 250px;
+}
+
+.user-detail {
+    background-color: #ecf0f1;
+    padding: 20px;
+    width: calc(100% - 250px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.user-detail h1 {
+    color: #2c3e50;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.user-detail h2 {
+    color: #16a085;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.user-detail .body1 {
+    color: #34495e;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.user-detail img {
+    border-radius: 50%;
+    margin-bottom: 20px;
+}
+
+.user-detail .MuiBox-root {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 500px;
+}
+
+@media (max-width: 768px) {
+    .layout-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+
+    .user-detail {
+        width: 100%;
+        height: auto;
+        padding: 10px;
+    }
+
+    .user-detail .MuiBox-root {
+        width: 100%;
+        max-width: none;
+    }
+}
