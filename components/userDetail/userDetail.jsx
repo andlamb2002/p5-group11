@@ -1,23 +1,55 @@
 import React from 'react';
 import { Typography, Paper, Box } from '@mui/material';
 import './userDetail.css';
+import { fetchModel } from '../../lib/fetchModelData'; 
 
 class UserDetail extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            user: null,
+            loading: true
+        };
+    }
+
+    componentDidMount() {
+        this.fetchUserDetail();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.match.params.userId !== this.props.match.params.userId) {
+            this.fetchUserDetail();
+        }
+    }
+
+    fetchUserDetail() {
+        const userId = this.props.match.params.userId;
+        const url = `http://localhost:3000/user/${userId}`; 
+        fetchModel(url)
+            .then(response => {
+                this.setState({
+                    user: response.data,
+                    loading: false
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching user detail:', error);
+            });
     }
 
     render() {
-        const userId = this.props.match.params.userId;
-        const user = window.models.userModel(userId);
-        console.log(user);
+        const { user, loading } = this.state;
 
         return (
             <Paper elevation={3} className="user-detail-container">
                 <Typography variant="h4" component="h1" gutterBottom>
                     User Profile
                 </Typography>
-                {user ? (
+                {loading ? (
+                    <Typography variant="body1">
+                        Loading user details...
+                    </Typography>
+                ) : (
                     <Box className="user-content">
                         <Box className="user-photo-box">
                             <img
@@ -45,14 +77,9 @@ class UserDetail extends React.Component {
 
                         </Box>
                     </Box>
-                ) : (
-                    <Typography variant="body1">
-                        Loading user details...
-                    </Typography>
                 )}
             </Paper>
         );
-
     }
 }
 
