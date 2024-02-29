@@ -28,7 +28,7 @@ class UserDetail extends React.Component {
                         </Box>
                         <Box className="user-info-box">
                             <Typography variant="h5" component="h2">
-                                {user.name}
+                                {user.first_name + " " + user.last_name}
                             </Typography>
                             <Typography variant="body1">
                                 Location: {user.location}
@@ -36,6 +36,7 @@ class UserDetail extends React.Component {
                             <Typography variant="body1">
                                 Occupation: {user.occupation}
                             </Typography>
+
                         </Box>
                     </Box>
                 ) : (
