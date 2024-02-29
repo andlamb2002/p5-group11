@@ -10,49 +10,57 @@
     width: 250px;
 }
 
-.user-detail {
+.user-detail-container {
+    display: flex;
+    flex-direction: column;
     background-color: #ecf0f1;
     padding: 20px;
     width: calc(100% - 250px);
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
-.user-detail h1 {
+.user-content {
+    display: flex;
+    margin-top: 20px;
+}
+
+.user-photo-box {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding-right: 20px;
+}
+
+.user-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+
+.user-info-box {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.user-detail-container .MuiTypography-h4 {
     color: #2c3e50;
     font-size: 24px;
     margin-bottom: 20px;
 }
 
-.user-detail h2 {
+.user-detail-container .MuiTypography-h5 {
     color: #16a085;
     font-size: 20px;
     margin-bottom: 10px;
 }
 
-.user-detail .body1 {
+.user-detail-container .MuiTypography-body1 {
     color: #34495e;
     margin-bottom: 10px;
     font-size: 16px;
 }
-
-.user-detail img {
-    border-radius: 50%;
-    margin-bottom: 20px;
-}
-
-.user-detail .MuiBox-root {
-    background-color: #fff;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    width: 80%;
-    max-width: 500px;
-}
-
 @media (max-width: 768px) {
     .layout-container {
         flex-direction: column;
@@ -63,14 +71,23 @@
         height: auto;
     }
 
-    .user-detail {
+    .user-detail-container {
         width: 100%;
         height: auto;
         padding: 10px;
     }
 
-    .user-detail .MuiBox-root {
-        width: 100%;
-        max-width: none;
+    .user-content {
+        flex-direction: column;
+    }
+
+    .user-photo-box {
+        justify-content: flex-start;
+        padding-right: 0;
+    }
+
+    .user-info-box {
+        flex: none;
+        margin-top: 20px;
     }
 }
