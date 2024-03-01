@@ -27,7 +27,7 @@
     "file-loader": "^6.2.0",
     "js-yaml": "^4.1.0",
     "prismjs": "^1.26.0",
-    "promise": "^8.1.0",
+    "promise": "^8.3.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-router": "^5.1.12",

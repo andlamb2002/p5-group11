@@ -5,9 +5,6 @@ import './userDetail.css';
 import fetchModel from '../../lib/fetchModelData';
 
 
-/**
- * Define UserDetail, a React component of project #5
- */
 class UserDetail extends React.Component {
   constructor(props) {
     super(props);

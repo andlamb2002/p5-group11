@@ -1,10 +1,19 @@
 import React from 'react';
+<<<<<<< HEAD
 //import { Divider, List, ListItemButton, ListItemText,}from '@mui/material';
 import { Divider, List, ListItem, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import fetchModel from '../../lib/fetchModelData';
+=======
+import {
+  List,
+  ListItemButton,
+  ListItemText,
+}
+from '@mui/material';
+>>>>>>> 6bf617a3678574720b87dc251fe118423c8f072b
 import './userList.css';
-// import axios from 'axios';
+import { fetchModel } from '../../lib/fetchModelData';
 
 class UserList extends React.Component {
     constructor(props) {
@@ -79,24 +88,21 @@ class UserList extends React.Component {
         });
     }
 
-    // handleUserListChange(){
-    //     axios.get("/user/list")
-    //         .then((response) =>
-    //         {
-    //             this.setState({
-    //                 users: response.data
-    //             });
-    //         });
-    // }
-
-    handleUserListChange(){
-        const userList = window.models.userListModel();
-        this.setState({
-            users: userList
-        });
-           }
+    handleUserListChange() {
+        const url = 'http://localhost:3000/user/list'; 
+        fetchModel(url)
+            .then(response => {
+                this.setState({
+                    users: response.data 
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching user list:', error);
+            });
+    }
 
     render() {
+<<<<<<< HEAD
       return this.state.users ?(
           <div>
           <List component="nav">
@@ -116,6 +122,27 @@ class UserList extends React.Component {
           <div/>
       );
     } */
+=======
+        return this.state.users ? (
+            <div>
+                <List component="nav">
+                    {
+                        this.state.users.map(user => (
+                            <ListItemButton selected={this.state.user_id === user._id}
+                                key={user._id}
+                                divider={true}
+                                component="a" href={"#/users/" + user._id}>
+                                <ListItemText primary={user.first_name + " " + user.last_name} />
+                            </ListItemButton>
+                        ))
+                    }
+                </List>
+            </div>
+        ) : (
+                <div />
+            );
+    }
+>>>>>>> 6bf617a3678574720b87dc251fe118423c8f072b
 }
 
 export default UserList;
