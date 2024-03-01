@@ -7,6 +7,7 @@ import {
   CardMedia,
 } from '@mui/material';
 import { fetchModel } from '../../lib/fetchModelData';
+import TopBar from '../topBar/TopBar';
 
 class UserPhotos extends React.Component {
   constructor(props) {
@@ -48,9 +49,11 @@ class UserPhotos extends React.Component {
 
   render() {
     const { photos, user, loading } = this.state;
+    const topNameValue = user ? `Photos of ${user.first_name} ${user.last_name}` : '';
 
     return (
       <div>
+        <TopBar topName={topNameValue}/>
         <Typography variant="h4">Photos</Typography>
         
         {loading ? (
