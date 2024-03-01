@@ -1,11 +1,8 @@
 import React from 'react';
-import {
-  Divider,
-  List,
-  ListItemButton,
-  ListItemText,
-}
-from '@mui/material';
+//import { Divider, List, ListItemButton, ListItemText,}from '@mui/material';
+import { Divider, List, ListItem, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
+import fetchModel from '../../lib/fetchModelData';
 import './userList.css';
 // import axios from 'axios';
 
@@ -13,15 +10,61 @@ class UserList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-                users: undefined,
-                user_id: undefined
+                userList: [],
+                /*users: undefined,
+                user_id: undefined*/ 
             };
     }
 
     componentDidMount() {
-        this.handleUserListChange();
+        const url = '/user/list';
+
+        fetchModel(url).then((response) => {
+            this.setState({ userList: response.data });
+        })
+        .catch((error) => {
+            console.error('Error fetching user List:', error);
+        });
     }
 
+    handleUserClick = (user) => {
+        this.props.setTopName(`User Details of ${user.first_name} ${user.last_name}`);
+    };
+
+    render() {
+        const { userList } = this.state;
+        
+        return (
+         <div >
+           <div>
+             <List component="nav">
+               {userList.map((user) => (
+                 <div key={user._id}>
+                   <ListItem>
+                     <Button
+                     onClick={() => {
+                       this.handleUserClick(user); 
+                   }}
+                       component={Link}
+                       to={`/users/${user._id}`}
+                       className="ButtonStyle" 
+                     >
+                       {`${user.first_name} ${user.last_name}`}
+                     </Button>
+                   </ListItem>
+                   <Divider />
+                 </div>
+               ))}
+             </List>
+           </div>
+           <div style={{ width: '70%' }}>
+             {this.props.children}
+           </div>
+         </div>
+        );
+    }
+
+/*
     componentDidUpdate() {
         const new_user_id = this.props.match?.params.userId;
         const current_user_id = this.state.user_id;
@@ -72,7 +115,7 @@ class UserList extends React.Component {
       ) : (
           <div/>
       );
-    }
-  }
+    } */
+}
 
 export default UserList;
