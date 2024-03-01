@@ -1,17 +1,7 @@
 import React from 'react';
-<<<<<<< HEAD
 //import { Divider, List, ListItemButton, ListItemText,}from '@mui/material';
 import { Divider, List, ListItem, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
-import fetchModel from '../../lib/fetchModelData';
-=======
-import {
-  List,
-  ListItemButton,
-  ListItemText,
-}
-from '@mui/material';
->>>>>>> 6bf617a3678574720b87dc251fe118423c8f072b
 import './userList.css';
 import { fetchModel } from '../../lib/fetchModelData';
 
@@ -102,7 +92,6 @@ class UserList extends React.Component {
     }
 
     render() {
-<<<<<<< HEAD
       return this.state.users ?(
           <div>
           <List component="nav">
@@ -122,27 +111,6 @@ class UserList extends React.Component {
           <div/>
       );
     } */
-=======
-        return this.state.users ? (
-            <div>
-                <List component="nav">
-                    {
-                        this.state.users.map(user => (
-                            <ListItemButton selected={this.state.user_id === user._id}
-                                key={user._id}
-                                divider={true}
-                                component="a" href={"#/users/" + user._id}>
-                                <ListItemText primary={user.first_name + " " + user.last_name} />
-                            </ListItemButton>
-                        ))
-                    }
-                </List>
-            </div>
-        ) : (
-                <div />
-            );
-    }
->>>>>>> 6bf617a3678574720b87dc251fe118423c8f072b
 }
 
 export default UserList;
