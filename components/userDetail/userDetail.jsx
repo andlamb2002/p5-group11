@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography, Button, Paper, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import './userDetail.css';
-import fetchModel from '../../lib/fetchModelData';
+import { fetchModel } from '../../lib/fetchModelData';
 
 
 class UserDetail extends React.Component {
