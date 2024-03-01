@@ -49,7 +49,7 @@ class UserPhotos extends React.Component {
 
   render() {
     const { photos, user, loading } = this.state;
-    const topNameValue = user ? `User Photos for ${user.first_name} ${user.last_name}` : '';
+    const topNameValue = user ? `Photos of ${user.first_name} ${user.last_name}` : '';
 
     return (
       <div>
