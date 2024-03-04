@@ -58,6 +58,12 @@ class TopBar extends React.Component {
           </Typography>
           
           
+          {this.state.app_info && (
+            <Typography variant="h5" component="div" color="inherit">
+              Version: {this.state.app_info.__v}
+            </Typography>
+          )}
+          
 
         </Toolbar>
       </AppBar>
