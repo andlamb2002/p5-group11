@@ -2,7 +2,6 @@ import React from 'react';
 import { Divider, List, ListItem, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import './userList.css';
-// import { fetchModel } from '../../lib/fetchModelData';
 import axios from 'axios';
 
 class UserList extends React.Component {
