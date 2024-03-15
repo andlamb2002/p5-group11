@@ -6,7 +6,6 @@ import {
   CardContent,
   CardMedia,
 } from '@mui/material';
-/*import { fetchModel } from '../../lib/fetchModelData'; */
 import axios from 'axios';
 import TopBar from '../topBar/TopBar';
 
@@ -14,6 +13,7 @@ class UserPhotos extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      userList: [],
       photos: [],
       user: null,
       loading: true
@@ -32,8 +32,9 @@ class UserPhotos extends React.Component {
 
   async fetchUserPhotos() {
     const userId = this.props.match.params.userId;
-    const userUrl = `http://localhost:3000/user/${userId}`;
-    const photosUrl = `http://localhost:3000/photosOfUser/${userId}`;
+    const userListUrl = '/user/list';
+    const userUrl = `/user/${userId}`;
+    const photosUrl = `/photosOfUser/${userId}`;
     
     /*
     Promise.all([fetchModel(userUrl), fetchModel(photosUrl)])
@@ -50,12 +51,14 @@ class UserPhotos extends React.Component {
       */
 
     try{
-      const[userResponse, photosResponse] = await Promise.all([
+      const[userListResponse, userResponse, photosResponse] = await Promise.all([
+        axios.get(userListUrl),
         axios.get(userUrl),
         axios.get(photosUrl)
       ]);
 
       this.setState({
+        userList: userListResponse.data,
         user: userResponse.data,
         photos: photosResponse.data,
         loading: false
@@ -66,7 +69,7 @@ class UserPhotos extends React.Component {
   }
 
   render() {
-    const { photos, user, loading } = this.state;
+    const { userList, photos, user, loading } = this.state;
     const topNameValue = user ? `Photos of ${user.first_name} ${user.last_name}` : '';
 
     return (
@@ -94,18 +97,25 @@ class UserPhotos extends React.Component {
                 {photo.comments && photo.comments.length > 0 ? (
                   <div>
                     <Typography variant="h5">Comments:</Typography>
-                    {photo.comments.map(comment => (
-                      <div key={comment._id}>
-                        <Typography variant="body1">
-                          <Link to={`/users/${comment.user._id}`}>
-                            {comment.user.first_name} {comment.user.last_name}
-                          </Link> &#160;
-                          ( {comment.date_time} ): &#160; 
-                          {comment.comment}
-                          <br />
-                        </Typography>
-                      </div>
-                    ))}
+                    {photo.comments.map(comment => {
+                      const commentedUser = userList.find(cUser => cUser._id === comment.user_id);
+                      if (commentedUser) {
+                        return (
+                          <div key={comment._id}>
+                            <Typography variant="body1">
+                              <Link to={`/users/${comment.user_id}`}>
+                                {commentedUser.first_name} {commentedUser.last_name}
+                              </Link> &#160;
+                              ( {comment.date_time} ): &#160; 
+                              {comment.comment}
+                              <br />
+                            </Typography>
+                          </div>
+                        );
+                      } else {
+                        return null; 
+                      }
+                    })}
                   </div>
                 ) : (
                   <Typography variant="body1">No comments for this photo.</Typography>
