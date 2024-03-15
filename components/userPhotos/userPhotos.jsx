@@ -6,7 +6,8 @@ import {
   CardContent,
   CardMedia,
 } from '@mui/material';
-import { fetchModel } from '../../lib/fetchModelData';
+/*import { fetchModel } from '../../lib/fetchModelData'; */
+import axios from 'axios';
 import TopBar from '../topBar/TopBar';
 
 class UserPhotos extends React.Component {
@@ -29,11 +30,12 @@ class UserPhotos extends React.Component {
     }
   }
 
-  fetchUserPhotos() {
+  async fetchUserPhotos() {
     const userId = this.props.match.params.userId;
     const userUrl = `http://localhost:3000/user/${userId}`;
     const photosUrl = `http://localhost:3000/photosOfUser/${userId}`;
-
+    
+    /*
     Promise.all([fetchModel(userUrl), fetchModel(photosUrl)])
       .then(([userResponse, photosResponse]) => {
         this.setState({
@@ -45,6 +47,22 @@ class UserPhotos extends React.Component {
       .catch(error => {
         console.error('Error fetching user photos:', error);
       });
+      */
+
+    try{
+      const[userResponse, photosResponse] = await Promise.all([
+        axios.get(userUrl),
+        axios.get(photosUrl)
+      ]);
+
+      this.setState({
+        user: userResponse.data,
+        photos: photosResponse.data,
+        loading: false
+      });
+    } catch (error){
+      console.error('Error fetching user photos:',error);
+    }
   }
 
   render() {
