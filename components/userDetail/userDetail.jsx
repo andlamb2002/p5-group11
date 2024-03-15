@@ -61,13 +61,7 @@ class UserDetail extends React.Component {
             {user ? (
                 <Box className="user-content">
                 
-                    <Box className="user-photo-box">
-                        <img
-                            //src={/images/${photos[0].file_name}}
-                            alt={user.name}
-                            className="user-photo"
-                        />
-                    </Box>
+                    
                     
                     <Box className="user-info-box">
                         <Typography variant="body1">
