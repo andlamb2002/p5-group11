@@ -170,21 +170,37 @@ app.get("/user/:id", function (request, response) {
  * URL /photosOfUser/:id - Returns the Photos for User (id).
  */
 app.get("/photosOfUser/:id", function (request, response) {
-  Photo.find({ user_id: request.params.id }, '_id user_id comments file_name date_time').populate({
-    path: 'comments.user',
-    select: '_id first_name last_name'
-  }).exec((err, photos) => {
-    if (err) {
-      console.error("Error in /photosOfUser/:id:", err);
-      response.status(500).send(JSON.stringify(err));
-      return;
-    }
-    if (photos.length === 0) {
-      response.status(400).send("Photos not found for user with _id:" + request.params.id);
-      return;
-    }
-    // No need to clone photos because we are not modifying any of the returned documents directly
-    response.json(photos);
+  // Photo.find({ user_id: request.params.id }, '_id user_id comments file_name date_time').populate({
+  //   path: 'comments.user',
+  //   select: '_id first_name last_name'
+  // }).exec((err, photos) => {
+  //   if (err) {
+  //     console.error("Error in /photosOfUser/:id:", err);
+  //     response.status(500).send(JSON.stringify(err));
+  //     return;
+  //   }
+  //   if (photos.length === 0) {
+  //     response.status(400).send("Photos not found for user with _id:" + request.params.id);
+  //     return;
+  //   }
+  //   // No need to clone photos because we are not modifying any of the returned documents directly
+  //   response.json(photos);
+  // });
+  const id = request.params.id;
+  console.log("Fetching photos for user with ID:", id); // Add this line for logging
+  
+  Photo.find({ user_id: id }, function (err, photos) {
+      if (err) {
+        console.error("Error fetching photos:", err);
+        response.status(500).send(JSON.stringify(err));
+        return;
+      }
+      if (photos.length === 0) {
+        response.status(400).send("Photos not found");
+        return;
+      }
+      // Assuming comments are embedded in the Photo schema
+      response.status(200).send(photos);
   });
 });
 
