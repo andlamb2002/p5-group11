@@ -1,7 +1,7 @@
 import React from 'react';
 import {  AppBar, Toolbar, Typography} from '@mui/material';
 import './TopBar.css';
-import { fetchModel } from '../../lib/fetchModelData';
+import axios from 'axios';
 
 /**
  * Define TopBar, a React componment of project #5
@@ -20,18 +20,15 @@ class TopBar extends React.Component {
 
   
   handleAppInfoChange() {
-    const app_info = this.state.app_info;
-    if (app_info === null) {
-      fetchModel('/test/info')
-        .then((response) => {
-          this.setState({
-            app_info: response.data,
-          });
-        })
-        .catch((error) => {
-          console.error('Error fetching app info:', error);
-        });
-    }
+    axios.get('/test/info')
+    .then((response) => {
+      this.setState({
+        app_info: response.data,
+      });
+    })
+    .catch((error) => {
+      console.error('Error fetching app info:', error);
+    });
   }
   
 
@@ -58,12 +55,6 @@ class TopBar extends React.Component {
           </Typography>
 
 
-          {this.state.app_info && (
-            <Typography variant="h5" component="div" color="inherit">
-              Version: {this.state.app_info.__v}
-            </Typography>
-          )}
-          
           {this.state.app_info && (
             <Typography variant="h5" component="div" color="inherit">
               Version: {this.state.app_info.__v}
