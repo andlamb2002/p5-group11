@@ -158,11 +158,9 @@ class UserDetail extends React.Component {
 
 
   render() {
-    //const userId = this.props.match.params.userId;
-    //const { user } = this.state;
-    const userId = this.props.match.params.userId;
-    const user = window.models.userModel(userId);
-    const pik = window.models.photoOfUserModel(userId);
+    // const userId = this.props.match.params.userId;
+    const { user } = this.state;
+    // const pik = window.models.photoOfUserModel(userId);
     console.log(user);
 
     return (
@@ -174,7 +172,7 @@ class UserDetail extends React.Component {
                 <Box className="user-content">
                     <Box className="user-photo-box">
                         <img
-                            src={`/images/${pik[0].file_name}`}
+                            // src={`/images/${pik[0].file_name}`}
                             alt={user.name}
                             className="user-photo"
                         />
