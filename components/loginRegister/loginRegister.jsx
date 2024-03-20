@@ -27,6 +27,31 @@ class LoginRegister extends React.Component {
             });
     };
 
+    checkClicked = () => {
+        axios.get('/check-login')
+            .then(response => {
+                if (response.data.loggedIn) {
+                    this.setState({ loginResponse: `User ${response.data.user.login_name} is logged in` });
+                } else {
+                    this.setState({ loginResponse: 'No user is logged in' });
+                }
+            })
+            .catch(error => {
+                console.error('Check login error:', error);
+            });
+    };
+
+    logout = () => {
+        axios.post('/admin/logout')
+            .then(response => {
+                this.setState({ loginResponse: response.data });
+            })
+            .catch(error => {
+                this.setState({ loginResponse: 'Logout failed' });
+                console.error('Logout error:', error);
+            });
+    };
+
     render() {
         return (
             <div>
@@ -42,6 +67,8 @@ class LoginRegister extends React.Component {
                     </label>
                     <button type="submit">Login</button>
                 </form>
+                <button onClick={this.logout}>Logout</button>
+                <button onClick={this.checkClicked}>Check</button>
                 {this.state.loginResponse && <p>{this.state.loginResponse}</p>}
             </div>
         );

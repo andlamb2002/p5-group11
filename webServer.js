@@ -81,6 +81,29 @@ app.post('/admin/login', function (request, response) {
   });
 });
 
+app.post('/admin/logout', function (request, response) {
+  if (request.session.user) {
+      request.session.destroy(function(err) {
+          if (err) {
+              console.error('Logout error', err);
+              response.status(500).send(JSON.stringify(err));
+          } else {
+              response.send('Logged out');
+          }
+      });
+  } else {
+      response.status(400).send('Not logged in');
+  }
+});
+
+app.get('/check-login', function (request, response) {
+  if (request.session.user) {
+      response.send({ loggedIn: true, user: request.session.user });
+  } else {
+      response.send({ loggedIn: false });
+  }
+});
+
 app.get("/", function (request, response) {
   response.send("Simple web server of files from " + __dirname);
 });
