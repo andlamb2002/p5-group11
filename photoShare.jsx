@@ -52,10 +52,10 @@ render() {
                     </Typography>
                   )}
                 /> */}
-                <Route path="/" component={loginRegister} />
                 <Route path="/users/:userId" component={UserDetail} />
                 <Route path="/photos/:userId" component={UserPhotos} />
                 <Route path="/users" component={UserList} />
+                <Route path="/" component={loginRegister} />
               </Switch>
             
           </Grid>
