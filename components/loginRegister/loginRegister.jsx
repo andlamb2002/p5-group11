@@ -6,7 +6,7 @@ class LoginRegister extends React.Component {
         super(props);
         this.state = {
             loginName: '', 
-            loginResponse: null
+            message: null
         };
     }
 
@@ -19,11 +19,22 @@ class LoginRegister extends React.Component {
 
         axios.post('/admin/login', { login_name: this.state.loginName })
             .then(response => {
-                this.setState({ loginResponse: `Login successful for user: ${response.data.first_name} ${response.data.last_name}` });
+                this.setState({ message: `Login successful for user: ${response.data.first_name} ${response.data.last_name}` });
             })
             .catch(error => {
-                this.setState({ loginResponse: 'Login failed. Please try again.' });
+                this.setState({ message: 'Login failed. Please try again.' });
                 console.error('Login error:', error);
+            });
+    };
+
+    handleLogout = () => {
+        axios.post('/admin/logout')
+            .then(response => {
+                this.setState({ message: response.data });
+            })
+            .catch(error => {
+                this.setState({ message: 'Logout failed' });
+                console.error('Logout error:', error);
             });
     };
 
@@ -31,9 +42,9 @@ class LoginRegister extends React.Component {
         axios.get('/check-login')
             .then(response => {
                 if (response.data.loggedIn) {
-                    this.setState({ loginResponse: `User ${response.data.user.login_name} is logged in` });
+                    this.setState({ message: `User ${response.data.user.login_name} is logged in` });
                 } else {
-                    this.setState({ loginResponse: 'No user is logged in' });
+                    this.setState({ message: 'No user is logged in' });
                 }
             })
             .catch(error => {
@@ -41,35 +52,23 @@ class LoginRegister extends React.Component {
             });
     };
 
-    logout = () => {
-        axios.post('/admin/logout')
-            .then(response => {
-                this.setState({ loginResponse: response.data });
-            })
-            .catch(error => {
-                this.setState({ loginResponse: 'Logout failed' });
-                console.error('Logout error:', error);
-            });
-    };
-
     render() {
         return (
             <div>
                 <h1>Login/Register Component</h1>
-                <form onSubmit={this.handleLogin}>
-                    <label>
-                        Login Name:
-                        <input
-                            type="text"
-                            value={this.state.loginName}
-                            onChange={this.handleLoginNameChange}
-                        />
-                    </label>
-                    <button type="submit">Login</button>
-                </form>
-                <button onClick={this.logout}>Logout</button>
+                <label>
+                    Login Name:
+                    <input
+                        type="text"
+                        value={this.state.loginName}
+                        onChange={this.handleLoginNameChange}
+                    />
+                </label>
+
+                <button onClick={this.handleLogin}>Login</button>
+                <button onClick={this.handleLogout}>Logout</button>
                 <button onClick={this.checkClicked}>Check</button>
-                {this.state.loginResponse && <p>{this.state.loginResponse}</p>}
+                {this.state.message && <p>{this.state.message}</p>}
             </div>
         );
     }
