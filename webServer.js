@@ -41,7 +41,7 @@ const app = express();
 
 const session = require("express-session");
 const bodyParser = require("body-parser");
-const multer = require("multer");
+// const multer = require("multer");
 
 app.use(session({secret: "secretKey", resave: false, saveUninitialized: false}));
 app.use(bodyParser.json());
@@ -63,9 +63,54 @@ mongoose.connect("mongodb://127.0.0.1/project6", {
 // (http://expressjs.com/en/starter/static-files.html) do all the work for us.
 app.use(express.static(__dirname));
 
+app.post('/admin/login', function (request, response) {
+  const login_name = request.body.login_name;
+
+  User.findOne({login_name: login_name}, function(err, user) {
+      if (err) {
+          console.error('Error during user login:', err);
+          response.status(500).send(JSON.stringify(err));
+          return;
+      }
+      if (!user) {
+          response.status(400).send('Login failed');
+          return;
+      }
+      request.session.user = { _id: user._id, login_name: user.login_name };
+      response.send(user); 
+  });
+});
+
+app.post('/admin/logout', function (request, response) {
+  if (request.session.user) {
+      request.session.destroy(function(err) {
+          if (err) {
+              console.error('Logout error', err);
+              response.status(500).send(JSON.stringify(err));
+          } else {
+              response.send('Logged out');
+          }
+      });
+  } else {
+      response.status(400).send('Not logged in');
+  }
+});
+
+app.get('/check-login', function (request, response) {
+  if (request.session.user) {
+      response.send({ loggedIn: true, user: request.session.user });
+  } else {
+      response.send({ loggedIn: false });
+  }
+});
+
 app.get("/", function (request, response) {
   response.send("Simple web server of files from " + __dirname);
 });
+
+// app.get("/login-register", function (request, response) {
+  
+// });
 
 /**
  * Use express to handle argument passing in the URL. This .get will cause
