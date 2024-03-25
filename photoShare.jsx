@@ -28,6 +28,10 @@ setTopName = (name) => {
   this.setState({ topname: name });
 };
 
+setUserLoggedIn = (isLoggedIn) => {
+  this.setState({ userIsLoggedIn: isLoggedIn });
+};
+
 render() {
   const {userIsLoggedIn} = this.state;
   return (
@@ -46,16 +50,8 @@ render() {
           <Grid item sm={10}>
 
               <Switch>
-                {/* <Route
-                  exact
-                  path="/"
-                  render={() => (
-                    <Typography variant="body1">
-                    </Typography>
-                  )}
-                /> */}
                 <Route exact path="/" render={() => (
-                    userIsLoggedIn ? <Redirect to="/users" /> : <Redirect to="/login-register" />
+                    userIsLoggedIn ? <div>Logged In</div> : <Redirect to="/login-register" />
                 )} />
                 <Route path="/users/:userId" render={(props) => (
                     userIsLoggedIn ? <UserDetail {...props} /> : <Redirect to="/login-register" />
@@ -63,11 +59,8 @@ render() {
                 <Route path="/photos/:userId" render={(props) => (
                     userIsLoggedIn ? <UserPhotos {...props} /> : <Redirect to="/login-register" />
                 )} />
-                <Route path="/users" render={() => (
-                    userIsLoggedIn ? <UserList setTopName={this.setTopName} /> : <Redirect to="/login-register" />
-                )} />
                 <Route path="/login-register" render={() => (
-                    userIsLoggedIn ? <Redirect to="/users" /> : <LoginRegister setUserLoggedIn={this.setUserLoggedIn} />
+                    userIsLoggedIn ? <Redirect to="/" /> : <LoginRegister setUserLoggedIn={this.setUserLoggedIn} />
                 )} />
               </Switch>
 

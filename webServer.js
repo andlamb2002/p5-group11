@@ -108,10 +108,6 @@ app.get("/", function (request, response) {
   response.send("Simple web server of files from " + __dirname);
 });
 
-// app.get("/login-register", function (request, response) {
-  
-// });
-
 /**
  * Use express to handle argument passing in the URL. This .get will cause
  * express to accept URLs with /test/<something> and return the something in
