@@ -44,13 +44,15 @@ render() {
           <div className="main-topbar-buffer" />
           <Grid item sm={2}>
             <Paper className="main-grid-item">
-              <UserList setTopName={this.setTopName} />
+              {userIsLoggedIn && (
+                <UserList setTopName={this.setTopName} />
+              )}
             </Paper>
           </Grid>
           <Grid item sm={10}>
 
               <Switch>
-                <Route exact path="/" render={() => (
+                <Route exact path="/photo-share.html" render={() => (
                     userIsLoggedIn ? <div>Logged In</div> : <Redirect to="/login-register" />
                 )} />
                 <Route path="/users/:userId" render={(props) => (
@@ -60,7 +62,7 @@ render() {
                     userIsLoggedIn ? <UserPhotos {...props} /> : <Redirect to="/login-register" />
                 )} />
                 <Route path="/login-register" render={() => (
-                    userIsLoggedIn ? <Redirect to="/" /> : <LoginRegister setUserLoggedIn={this.setUserLoggedIn} />
+                    userIsLoggedIn ? <Redirect to="/photo-share.html" /> : <LoginRegister setUserLoggedIn={this.setUserLoggedIn} />
                 )} />
               </Switch>
 
