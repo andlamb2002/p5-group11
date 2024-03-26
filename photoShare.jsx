@@ -53,7 +53,7 @@ render() {
 
               <Switch>
                 <Route exact path="/photo-share.html" render={() => (
-                    userIsLoggedIn ? <div>Logged In</div> : <Redirect to="/login-register" />
+                    userIsLoggedIn ? <div></div> : <Redirect to="/login-register" />
                 )} />
                 <Route path="/users/:userId" render={(props) => (
                     userIsLoggedIn ? <UserDetail {...props} /> : <Redirect to="/login-register" />
@@ -62,7 +62,7 @@ render() {
                     userIsLoggedIn ? <UserPhotos {...props} /> : <Redirect to="/login-register" />
                 )} />
                 <Route path="/login-register" render={() => (
-                    userIsLoggedIn ? <Redirect to="/photo-share.html" /> : <LoginRegister setUserLoggedIn={this.setUserLoggedIn} />
+                    userIsLoggedIn ? <Redirect to="/photo-share.html" /> : <LoginRegister setUserLoggedIn={this.setUserLoggedIn} setTopName={this.setTopName} />
                 )} />
               </Switch>
 

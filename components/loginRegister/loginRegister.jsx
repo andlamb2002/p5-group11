@@ -1,5 +1,8 @@
 import React from 'react';
 import axios from 'axios';
+import { FaRegUser, FaUnlockAlt } from "react-icons/fa";
+import './loginRegister.css';
+
 
 class LoginRegister extends React.Component {
     constructor(props) {
@@ -19,8 +22,8 @@ class LoginRegister extends React.Component {
 
         axios.post('/admin/login', { login_name: this.state.loginName })
             .then(response => {
-                this.setState({ message: `Login successful for user: ${response.data.first_name} ${response.data.last_name}` });
                 this.props.setUserLoggedIn(true);
+                this.props.setTopName(`Hello ${response.data.first_name}`);
             })
             .catch(error => {
                 this.setState({ message: 'Login failed. Please try again.' });
@@ -28,50 +31,63 @@ class LoginRegister extends React.Component {
             });
     };
 
-    handleLogout = () => {
-        axios.post('/admin/logout')
-            .then(response => {
-                this.setState({ message: response.data });
-            })
-            .catch(error => {
-                this.setState({ message: 'Logout failed' });
-                console.error('Logout error:', error);
-            });
-    };
-
-    checkClicked = () => {
-        axios.get('/check-login')
-            .then(response => {
-                if (response.data.loggedIn) {
-                    this.setState({ message: `User ${response.data.user.login_name} is logged in` });
-                } else {
-                    this.setState({ message: 'No user is logged in' });
-                }
-            })
-            .catch(error => {
-                console.error('Check login error:', error);
-            });
-    };
+    // handleLogout = () => {
+    //     axios.post('/admin/logout')
+    //         .then(response => {
+    //             this.setState({ message: response.data });
+    //         })
+    //         .catch(error => {
+    //             this.setState({ message: 'Logout failed' });
+    //             console.error('Logout error:', error);
+    //         });
+    // };
 
     render() {
-        return (
-            <div>
-                <h1>Login/Register Component</h1>
-                <label>
-                    Login Name:
-                    <input
-                        type="text"
+        return(
+            <div className='wrapper'>
+       
+                 <form action=''>
+       
+                   <h1>Login</h1>
+       
+                   <div className='input-box'>
+                     <input type='text'
                         value={this.state.loginName}
                         onChange={this.handleLoginNameChange}
+                        placeholder='Username' 
+                        required
                     />
-                </label>
-
-                <button onClick={this.handleLogin}>Login</button>
-                <button onClick={this.handleLogout}>Logout</button>
-                <button onClick={this.checkClicked}>Check</button>
-                {this.state.message && <p>{this.state.message}</p>}
-            </div>
-        );
+                     <FaRegUser className='icon'/>
+                   </div>
+       
+                   <div className='input-box'>
+                     <input type='password' placeholder='Password' required/>
+                     <FaUnlockAlt className='icon'/>
+       
+                   </div>
+       
+                   <div className='remember-forgot'>
+                        <a href='#'>Forgot password?</a>
+                        {this.state.message && <p className='message'>{this.state.message}</p>}
+                   </div>
+       
+                   <button 
+                        type='submit'
+                        onClick={this.handleLogin}
+                   >
+                    Login
+                   </button>
+       
+                   <div className='register-link'>
+                    <p>Don&apos;t have an account? <a href="#">Register</a></p>
+       
+       
+                   </div>
+       
+                 </form>
+       
+            </div> 
+         );
     }
 }
 
