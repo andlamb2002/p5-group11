@@ -7,7 +7,6 @@ import {
   CardMedia,
 } from '@mui/material';
 import axios from 'axios';
-import TopBar from '../topBar/TopBar';
 
 class UserPhotos extends React.Component {
   constructor(props) {
@@ -24,12 +23,18 @@ class UserPhotos extends React.Component {
     this.fetchUserPhotos();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevProps.match.params.userId !== this.props.match.params.userId) {
       this.fetchUserPhotos();
     }
-  }
 
+    else if (this.state.user && (!prevState.user || prevState.user._id !== this.state.user._id)) {
+      const topNameValue = `Photos of ${this.state.user.first_name} ${this.state.user.last_name}`;
+      this.props.setTopName(topNameValue);
+    }
+  }
+  
+  // eslint-disable-next-line class-methods-use-this
   formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
     return new Date(dateString).toLocaleDateString('en-US', options);
@@ -40,20 +45,6 @@ class UserPhotos extends React.Component {
     const userListUrl = '/user/list';
     const userUrl = `/user/${userId}`;
     const photosUrl = `/photosOfUser/${userId}`;
-
-    /*
-    Promise.all([fetchModel(userUrl), fetchModel(photosUrl)])
-      .then(([userResponse, photosResponse]) => {
-        this.setState({
-          user: userResponse.data,
-          photos: photosResponse.data,
-          loading: false
-        });
-      })
-      .catch(error => {
-        console.error('Error fetching user photos:', error);
-      });
-      */
 
     try {
       const [userListResponse, userResponse, photosResponse] = await Promise.all([
@@ -75,11 +66,9 @@ class UserPhotos extends React.Component {
 
   render() {
     const { userList, photos, user, loading } = this.state;
-    const topNameValue = user ? `Photos of ${user.first_name} ${user.last_name}` : '';
 
     return (
         <div>
-          <TopBar topName={topNameValue}/>
           <Typography variant="h4">Photos</Typography>
 
           {loading ? (
