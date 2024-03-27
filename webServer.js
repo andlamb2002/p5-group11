@@ -41,7 +41,19 @@ const app = express();
 
 const session = require("express-session");
 const bodyParser = require("body-parser");
-// const multer = require("multer");
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './images');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 app.use(session({secret: "secretKey", resave: false, saveUninitialized: false}));
 app.use(bodyParser.json());
@@ -102,6 +114,20 @@ app.get('/check-login', function (request, response) {
   } else {
       response.send({ loggedIn: false });
   }
+});
+
+app.post('/photos/new', upload.single('uploadedphoto'), function (request, response) {
+  if (!request.file) {
+    return response.status(400).send('No file uploaded.');
+  }
+  const photo = new Photo({
+    file_name: request.file.filename,
+    date_time: new Date(),
+    user_id: request.session.user._id
+  });
+  photo.save()
+    .then(() => response.send('Photo uploaded successfully.'))
+    .catch(err => response.status(500).send(err));
 });
 
 app.get("/", function (request, response) {
