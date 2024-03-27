@@ -22,9 +22,8 @@ class LoginRegister extends React.Component {
 
         axios.post('/admin/login', { login_name: this.state.loginName })
             .then(response => {
-                this.setState({ message: `Login successful for user: ${response.data.first_name} ${response.data.last_name}` });
                 this.props.setUserLoggedIn(true);
-                this.props.setTopName(`Hello ${response.data.first_name}`);
+                this.props.setTopName(`Hi ${response.data.first_name}`);
             })
             .catch(error => {
                 this.setState({ message: 'Login failed. Please try again.' });

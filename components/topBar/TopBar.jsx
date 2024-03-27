@@ -31,14 +31,15 @@ class TopBar extends React.Component {
     });
   }
 
-  handleLogout = () => {
-    axios.post("/admin/logout", {})
-    .then(() => {
-      this.props.changeLoggedIn(false);
-      this.props.setTopName('Please Login');
-    })
-    .catch(err => console.log(err.response));
-  };
+    handleLogout = () => {
+        axios.post('/admin/logout')
+            .then(response => {
+              this.props.setUserLoggedIn(false);
+            })
+            .catch(error => {
+                console.error('Logout error:', error);
+            });
+    };
   
 
   render() {
