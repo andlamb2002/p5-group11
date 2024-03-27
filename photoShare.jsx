@@ -39,7 +39,7 @@ render() {
       <div>
         <Grid container spacing={8}>
           <Grid item xs={12}>
-            <TopBar topName={this.state.topName} setTopName={this.setTopName} setUserLoggedIn={this.setUserLoggedIn}/>
+            <TopBar topName={this.state.topName} setTopName={this.setTopName} setUserLoggedIn={this.setUserLoggedIn} userIsLoggedIn={this.state.userIsLoggedIn}/>
           </Grid>
           <div className="main-topbar-buffer" />
           <Grid item sm={2}>

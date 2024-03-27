@@ -52,8 +52,8 @@ class TopBar extends React.Component {
       width: '90%',
     };
 
+    const { userIsLoggedIn } = this.props;
     
-
     return (
       <AppBar className="topbar-appBar" position="absolute">
         <Toolbar style={toolbarStyle}>
@@ -74,9 +74,11 @@ class TopBar extends React.Component {
           )}
 
           <Typography>
-            <Button onClick={this.handleLogout} varient="contained" style={{backgroundColor: "#ccb4a4", marginRight: 10}}>
-              Log Out
-            </Button>
+            {userIsLoggedIn && (
+              <Button onClick={this.handleLogout} variant="contained" style={{ backgroundColor: "#ccb4a4", marginRight: 10 }}>
+                Log Out
+              </Button>
+            )}
           </Typography>
           
 
