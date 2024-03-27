@@ -1,5 +1,5 @@
 import React from 'react';
-import {  AppBar, Toolbar, Typography} from '@mui/material';
+import { Button, AppBar, Toolbar, Typography} from '@mui/material';
 import './TopBar.css';
 import axios from 'axios';
 
@@ -30,6 +30,15 @@ class TopBar extends React.Component {
       console.error('Error fetching app info:', error);
     });
   }
+
+  handleLogout = () => {
+    axios.post("/admin/logout", {})
+    .then(() => {
+      this.props.changeLoggedIn(false);
+      this.props.setTopName('Please Login');
+    })
+    .catch(err => console.log(err.response));
+  };
   
 
   render() {
@@ -60,6 +69,12 @@ class TopBar extends React.Component {
               Version: {this.state.app_info.__v}
             </Typography>
           )}
+
+          <Typography>
+            <Button onClick={this.handleLogout} varient="contained" style={{backgroundColor: "#ccb4a4", marginRight: 10}}>
+              Log Out
+            </Button>
+          </Typography>
           
 
         </Toolbar>

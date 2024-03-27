@@ -39,7 +39,7 @@ render() {
       <div>
         <Grid container spacing={8}>
           <Grid item xs={12}>
-            <TopBar topName={this.state.topname} />
+            <TopBar topName={this.state.topname} handleLogout={this.handleLogout}/>
           </Grid>
           <div className="main-topbar-buffer" />
           <Grid item sm={2}>
