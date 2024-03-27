@@ -31,17 +31,6 @@ class LoginRegister extends React.Component {
             });
     };
 
-    // handleLogout = () => {
-    //     axios.post('/admin/logout')
-    //         .then(response => {
-    //             this.setState({ message: response.data });
-    //         })
-    //         .catch(error => {
-    //             this.setState({ message: 'Logout failed' });
-    //             console.error('Logout error:', error);
-    //         });
-    // };
-
     render() {
         return(
             <div className='wrapper'>
@@ -66,8 +55,7 @@ class LoginRegister extends React.Component {
        
                    </div>
        
-                   <div className='remember-forgot'>
-                        <a href='#'>Forgot password?</a>
+                   <div className='message-div'>
                         {this.state.message && <p className='message'>{this.state.message}</p>}
                    </div>
        

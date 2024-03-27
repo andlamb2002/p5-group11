@@ -69,7 +69,7 @@ box-sizing: border-box;
 
 }
 
-.wrapper .remember-forgot {
+.wrapper .message-div {
 
 display: flex;
 flex-direction: column; 
@@ -79,24 +79,24 @@ margin:-15px 0 15px;
 
 }
 
-.remember-forgot label input {
+.message-div label input {
 
   accent-color: #fff;
   margin-right: 4px;
 }
 
-.remember-forgot a {
+.message-div a {
   color: #333;
   text-align: none;
 }
 
-.remember-forgot a:hover {
+.message-div a:hover {
    text-decoration: underline;
 
 
 }
 
-.remember-forgot .message {
+.message-div .message {
   color: red;
   margin: 10px 0;
 }
