@@ -19,13 +19,13 @@ class PhotoShare extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      topname: '',
+      topName: 'Please Login',
       userIsLoggedIn: false
     };
   }
   
 setTopName = (name) => {
-  this.setState({ topname: name });
+  this.setState({ topName: name });
 };
 
 setUserLoggedIn = (isLoggedIn) => {
@@ -39,7 +39,7 @@ render() {
       <div>
         <Grid container spacing={8}>
           <Grid item xs={12}>
-            <TopBar setTopName={this.state.topname} setUserLoggedIn={this.setUserLoggedIn}/>
+            <TopBar topName={this.state.topName} setTopName={this.setTopName} setUserLoggedIn={this.setUserLoggedIn}/>
           </Grid>
           <div className="main-topbar-buffer" />
           <Grid item sm={2}>
