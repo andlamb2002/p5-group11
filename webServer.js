@@ -116,7 +116,7 @@ app.get('/check-login', function (request, response) {
   }
 });
 
-app.post('/photos/new', upload.single('uploadedphoto'), function (request, response) {
+app.post('/photos/new', upload.single('uploadedPhoto'), function (request, response) {
   if (!request.file) {
     return response.status(400).send('No file uploaded.');
   }

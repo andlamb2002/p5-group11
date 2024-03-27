@@ -57,7 +57,6 @@ class TopBar extends React.Component {
       return;
     }
   
-    // Example upload process
     const formData = new FormData();
     formData.append("uploadedPhoto", file);
   
@@ -68,7 +67,6 @@ class TopBar extends React.Component {
     })
     .then(response => {
       console.log("Photo uploaded successfully.");
-      // Handle successful upload here (e.g., updating UI or state)
     })
     .catch(error => {
       console.error("Error uploading photo:", error);
