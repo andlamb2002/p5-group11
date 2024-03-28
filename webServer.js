@@ -233,6 +233,11 @@ app.get("/photosOfUser/:id", function (request, response) {
     return;
   }
 
+  if (!mongoose.Types.ObjectId.isValid(request.params.id)) {
+    response.status(400).send("Invalid user ID.");
+    return;
+  }
+
   Photo.find({ user_id: request.params.id })
     .select('_id file_name date_time user_id comments') 
     .exec((err, photos) => {
