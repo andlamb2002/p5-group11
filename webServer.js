@@ -42,6 +42,7 @@ const app = express();
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const multer = require("multer");
+const bcrypt = require("bcrypt");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -52,6 +53,19 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + '-' + uniqueSuffix);
   }
 });
+
+
+
+const userSchema = new mongoose.Schema({
+  login_name: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  first_name: String,
+  last_name: String,
+  location: String,
+  description: String,
+  occupation: String
+});
+
 
 const upload = multer({ storage: storage });
 
@@ -93,6 +107,48 @@ app.post('/admin/login', function (request, response) {
   });
 });
 
+
+
+
+
+app.post('/user', async function (request, response) {
+  const { login_name, password, first_name, last_name, location, description, occupation } = request.body;
+
+  try {
+      // Check if user already exists
+      const existingUser = await User.findOne({ login_name });
+      if (existingUser) {
+          return response.status(400).send('User already exists.');
+      }
+
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Create new user
+      const newUser = new User({
+          login_name,
+          password: hashedPassword,
+          first_name,
+          last_name,
+          location,
+          description,
+          occupation
+      });
+      await newUser.save();
+      
+      response.send('User registered successfully.');
+  } catch (error) {
+      console.error('Registration error:', error);
+      response.status(500).send('Registration failed. Please try again.');
+  }
+});
+
+
+
+
+
+
+
 app.post('/admin/logout', function (request, response) {
   if (request.session.user) {
     request.session.destroy(function(err) {
@@ -133,6 +189,12 @@ app.post('/photos/new', upload.single('uploadedPhoto'), function (request, respo
 app.get("/", function (request, response) {
   response.send("Simple web server of files from " + __dirname);
 });
+
+
+
+
+
+
 
 /**
  * Use express to handle argument passing in the URL. This .get will cause

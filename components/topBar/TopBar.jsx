@@ -17,6 +17,7 @@ class TopBar extends React.Component {
 
   componentDidMount() {
     this.handleAppInfoChange();
+    this.checkLoginStatus();
   }
 
   
@@ -72,6 +73,27 @@ class TopBar extends React.Component {
       console.error("Error uploading photo:", error);
     });
   };
+
+
+  
+  checkLoginStatus() {
+    axios.get('/check-login')
+        .then(response => {
+            if (response.data.loggedIn) {
+                this.props.setUserLoggedIn(true);
+                this.props.setTopName(`Hi ${response.data.user.first_name}`);
+            } else {
+                this.props.setUserLoggedIn(false);
+                this.props.setTopName('Please Login');
+            }
+        })
+        .catch(error => {
+            console.error('Error checking login status:', error);
+        });
+}
+
+
+
 
   render() {
     const toolbarStyle = {

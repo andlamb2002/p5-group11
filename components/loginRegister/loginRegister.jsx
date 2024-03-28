@@ -9,9 +9,20 @@ class LoginRegister extends React.Component {
         super(props);
         this.state = {
             loginName: 'malcolm', // Change to blank later 
+            password: '',
+            confirmPassword: '',
+            firstName: '',
+            lastName: '',
+            location: '',
+            description: '',
+            occupation: '',
             message: null
         };
     }
+
+    handleInputChange = (event) => {
+        this.setState({ [event.target.name]: event.target.value });
+    };
 
     handleLoginNameChange = (event) => {
         this.setState({ loginName: event.target.value });
@@ -31,6 +42,55 @@ class LoginRegister extends React.Component {
             });
     };
 
+    handleLogout = () => {
+        axios.post('/admin/logout')
+            .then(() => {
+                this.props.setUserLoggedIn(false);
+                this.props.setTopName('Please Login');
+            })
+            .catch(error => {
+                console.error('Logout error:', error);
+            });
+    };
+
+    handleRegister = (event) => {
+        event.preventDefault();
+        const { password, confirmPassword } = this.state;
+
+        if(password !== confirmPassword){
+            this.setState({ message: 'Password do not match' });
+            return;
+        }
+
+        axios.post('/user', {
+            login_name: this.state.loginName,
+            password: this.state.password,
+            first_name: this.state.firstName,
+            last_name: this.state.lastName,
+            location: this.state.location,
+            description: this.state.description,
+            occupation: this.state.occupation
+        })
+        .then(response => {
+            this.setState({
+                message: 'Registration successful!',
+                loginName: '',
+                password: '',
+                confirmPassword: '',
+                firstName: '',
+                lastName: '',
+                location: '',
+                description: '',
+                occupation: ''
+            });
+        })
+        .catch(error => {
+            // Handle registration error
+            console.error('Registration error:', error);
+            this.setState({ message: 'Registration failed. Please try again.' });
+        });
+    }
+
     render() {
         return(
             <div className='wrapper'>
@@ -41,6 +101,7 @@ class LoginRegister extends React.Component {
        
                    <div className='input-box'>
                      <input type='text'
+                        name='username'
                         value={this.state.loginName}
                         onChange={this.handleLoginNameChange}
                         placeholder='Username' 
@@ -50,7 +111,12 @@ class LoginRegister extends React.Component {
                    </div>
        
                    <div className='input-box'>
-                     <input type='password' placeholder='Password' required/>
+                     <input type='password' 
+                        name='password' 
+                        value={this.state.password}
+                        onChange={this.handleInputChange}
+                        placeholder='Password' 
+                        required/>
                      <FaUnlockAlt className='icon'/>
        
                    </div>
@@ -71,6 +137,32 @@ class LoginRegister extends React.Component {
        
        
                    </div>
+                    
+
+
+
+
+
+                   <h1>Register</h1>
+                    <div className='input-box'>
+                        <input
+                            type='password'
+                            name='confirmPassword'
+                            value={this.state.confirmPassword}
+                            onChange={this.handleInputChange}
+                            placeholder='Confirm Password'
+                            required
+                        />
+                        <FaUnlockAlt className='icon'/>
+                    </div>
+                    {/* Add other registration fields here */}
+                    <button type='submit' onClick={this.handleRegister}>Register Me</button>
+
+
+
+
+
+
        
                  </form>
        
