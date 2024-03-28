@@ -63,6 +63,33 @@ class UserPhotos extends React.Component {
       console.error('Error fetching user photos:', error);
     }
   }
+  handleAddComment = async (event, photoId) => {
+    event.preventDefault();
+    const commentText = event.target.elements.commentText.value;
+    if (!commentText) {
+      console.error("Comment text cannot be empty");
+      return;
+    }
+
+    try {
+      const response = await axios.post(`/commentsOfPhoto/${photoId}`, { comment: commentText });
+      const updatedPhoto = response.data;
+
+      this.setState(state => {
+        const photos = state.photos.map(photo => {
+          if (photo._id === photoId) {
+            return updatedPhoto;
+          }
+          return photo;
+        });
+        return { photos };
+      });
+
+      event.target.elements.commentText.value = '';
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
+  };
 
   render() {
     const { userList, photos, user, loading } = this.state;
@@ -88,33 +115,37 @@ class UserPhotos extends React.Component {
                         style={{objectFit: 'cover', width: '50%', height: '50%'}}
                     />
                     <CardContent>
+                      <Typography variant="h5">Comments:</Typography>
                       {photo.comments && photo.comments.length > 0 ? (
-                          <div>
-                            <Typography variant="h5">Comments:</Typography>
-                            {photo.comments.map(comment => {
-                              const commentedUser = userList.find(cUser => cUser._id === comment.user_id);
-                              if (commentedUser) {
-                                return (
-                                    <div key={comment._id}>
-                                      <Typography variant="body1">
-                                        <Link to={`/users/${comment.user_id}`}>
-                                          {commentedUser.first_name} {commentedUser.last_name}
-                                        </Link>
-                                        ( {this.formatDate(comment.date_time)} ):
-                                        {comment.comment}
-                                        <br />
-                                      </Typography>
-                                    </div>
-                                );
-                              } else {
-                                return null;
-                              }
-                            })}
-                          </div>
+                          photo.comments.map(comment => {
+                            const commentedUser = userList.find(cUser => cUser._id === comment.user_id);
+                            if (commentedUser) {
+                              return (
+                                  <div key={comment._id}>
+                                    <Typography variant="body1">
+                                      <Link to={`/users/${comment.user_id}`}>
+                                        {commentedUser.first_name} {commentedUser.last_name}
+                                      </Link>
+                                      ( {this.formatDate(comment.date_time)} ):
+                                      {comment.comment}
+                                      <br />
+                                    </Typography>
+                                  </div>
+                              );
+                            } else {
+                              return null;
+                            }
+                          })
                       ) : (
                           <Typography variant="body1">No comments for this photo.</Typography>
                       )}
+                      {}
+                      <form onSubmit={(event) => this.handleAddComment(event, photo._id)} style={{marginTop: '20px'}}>
+                        <input type="text" placeholder="Add a comment..." name="commentText" />
+                        <button type="submit">Submit</button>
+                      </form>
                     </CardContent>
+
                   </Card>
               ))
           )}

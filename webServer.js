@@ -80,6 +80,45 @@ app.post('/admin/login', function (request, response) {
       response.send(user); 
   });
 });
+app.post('/commentsOfPhoto/:photo_id', function (request, response) {
+  if (!request.session.user) {
+    response.status(401).send('Unauthorized');
+    return;
+  }
+  if (!request.body.comment || request.body.comment.trim() === '') {
+    response.status(400).send('Comment cannot be empty');
+    return;
+  }
+  const photo_id = request.params.photo_id;
+  const commentText = request.body.comment;
+  const userId = request.session.user._id;
+  Photo.findById(photo_id, function(err, photo) {
+    if (err) {
+      console.error('Error finding photo:', err);
+      response.status(500).send(JSON.stringify(err));
+      return;
+    }
+    if (!photo) {
+      response.status(404).send('Photo not found');
+      return;
+    }
+    const newComment = {
+      comment: commentText,
+      user_id: userId,
+      date_time: Date.now() // Current time
+    };
+    photo.comments.push(newComment);
+    photo.save(function (err, updatedPhoto) {
+      if (err) {
+        console.error('Error saving comment:', err);
+        response.status(500).send(JSON.stringify(err));
+        return;
+      }
+
+      response.json(updatedPhoto);
+    });
+  });
+});
 
 app.post('/admin/logout', function (request, response) {
   if (request.session.user) {
