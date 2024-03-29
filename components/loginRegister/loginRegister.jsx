@@ -66,11 +66,11 @@ class LoginRegister extends React.Component {
                     Login
                    </button>
        
-                   <div className='register-link'>
+                   {/* <div className='register-link'>
                     <p>Don&apos;t have an account? <a href="#">Register</a></p>
        
        
-                   </div>
+                   </div> */}
        
                  </form>
        
