@@ -1,63 +1,71 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  BrowserRouter, Route, Switch
+  BrowserRouter, Route, Switch, Redirect
 } from 'react-router-dom';
 import {
-  Grid, Typography, Paper
+  Grid, Paper
 } from '@mui/material';
 import './styles/main.css';
 
 // import necessary components
 import TopBar from './components/topBar/TopBar';
 import UserDetail from './components/userDetail/userDetail';
-import UserList from './components/userList/userList';
 import UserPhotos from './components/userPhotos/userPhotos';
-import loginRegister from './components/loginRegister/loginRegister';
+import UserList from './components/userList/userList';
+import LoginRegister from './components/loginRegister/loginRegister';
 
 class PhotoShare extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      topname: '',
+      topName: 'Please Login',
+      userIsLoggedIn: false
     };
   }
   
 setTopName = (name) => {
-  this.setState({ topname: name });
+  this.setState({ topName: name });
 };
 
-render() {  
+setUserLoggedIn = (isLoggedIn) => {
+  this.setState({ userIsLoggedIn: isLoggedIn });
+};
+
+render() {
+  const {userIsLoggedIn} = this.state;
   return (
     <BrowserRouter>
       <div>
         <Grid container spacing={8}>
           <Grid item xs={12}>
-            <TopBar topName={this.state.topname} />
+            <TopBar topName={this.state.topName} setTopName={this.setTopName} setUserLoggedIn={this.setUserLoggedIn} userIsLoggedIn={this.state.userIsLoggedIn}/>
           </Grid>
           <div className="main-topbar-buffer" />
           <Grid item sm={2}>
             <Paper className="main-grid-item">
-              <UserList setTopName={this.setTopName} />
+              {userIsLoggedIn && (
+                <UserList setTopName={this.setTopName} />
+              )}
             </Paper>
           </Grid>
           <Grid item sm={10}>
-            
+
               <Switch>
-                {/* <Route
-                  exact
-                  path="/"
-                  render={() => (
-                    <Typography variant="body1">
-                    </Typography>
-                  )}
-                /> */}
-                <Route path="/users/:userId" component={UserDetail} />
-                <Route path="/photos/:userId" component={UserPhotos} />
-                <Route path="/users" component={UserList} />
-                <Route path="/" component={loginRegister} />
+                <Route exact path="/photo-share.html" render={() => (
+                    userIsLoggedIn ? <div></div> : <Redirect to="/login-register" />
+                )} />
+                <Route path="/users/:userId" render={(props) => (
+                    userIsLoggedIn ? <UserDetail {...props} /> : <Redirect to="/login-register" />
+                )} />
+                <Route path="/photos/:userId" render={(props) => (
+                    userIsLoggedIn ? <UserPhotos {...props} setTopName={this.setTopName} /> : <Redirect to="/login-register" />
+                )} />
+                <Route path="/login-register" render={() => (
+                    userIsLoggedIn ? <Redirect to="/photo-share.html" /> : <LoginRegister setUserLoggedIn={this.setUserLoggedIn} setTopName={this.setTopName} />
+                )} />
               </Switch>
-            
+
           </Grid>
         </Grid>
       </div>
