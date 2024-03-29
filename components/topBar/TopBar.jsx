@@ -113,6 +113,7 @@ class TopBar extends React.Component {
                             <Button
                                 component = "label"
                                 variant = "contained"
+                                sx={{ backgroundColor: 'green' }}
                             >
                                 Add Photo
                                 <input
