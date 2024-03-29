@@ -42,7 +42,6 @@ const app = express();
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const multer = require("multer");
-// const fs = require("fs");
 const path = require("path");
 
 const storage = multer.diskStorage({
