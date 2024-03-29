@@ -1,139 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
-* {
-
-margin:0;
-padding:0;
-box-sizing: border-box;
-
-}
-
-.wrapper{
-  font-family: "poppins, sans-serif";
+.login-register-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  /* background: #1976d2;  */
-
-  width: 420px;
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, .2);
-  box-shadow: 0 0 10px rgba(0, 0, 0, .2);
-  backdrop-filter: blur(30px);
-  color: #333;
-  border-radius: 10px;
-  padding: 30px 40px;
-
-}
-.wrapper h1 {
-  font-size: 36px;
-  text-align:center;
-
+  justify-content: space-around;
 }
 
-.wrapper .input-box{
-
-  position: relative;
-  width: 100%;
-  height:50px;
-  margin:30px 0;
-
-}
-.input-box input{
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  outline: none;
-  border: 2px solid rgba(255, 255, 255, .2);
-  border-radius: 40px;
-  font-size: 16px;
-  color: #333;
-  padding: 20px 45px 20px 20px;
-
+.login-box, .register-box {
+  width: 45%;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
-.input-box input::placeholder {
-
-  color: #333;
-
-}
-
-.input-box .icon {
-    position:absolute;
-    right: 20px;
-    top:50%;
-    transform: translateY(-50%);
-    font-size: 16px;
-
-
-
-}
-
-.wrapper .message-div {
-
-display: flex;
-flex-direction: column; 
-align-items: flex-start;
-font-size: 15.5px;
-margin:-15px 0 15px;
-
-}
-
-.message-div label input {
-
-  accent-color: #fff;
-  margin-right: 4px;
-}
-
-.message-div a {
-  color: #333;
-  text-align: none;
-}
-
-.message-div a:hover {
-   text-decoration: underline;
-
-
-}
-
-.message-div .message {
-  color: red;
-  margin: 10px 0;
-}
-
-.wrapper button {
-
- width:100%;
- height:45px;
- background: #fff;
- border:none;
- outline: none;
- border-radius: 40px;
- box-shadow: 0 0 10px rgba(0,0,0,.1);
- cursor: pointer;
- font-size: 16px;
- color: #333;
- font-weight: 700;
-
-}
-
-.wrapper .register-link {
-
-font-size: 14.5px;
-text-align: center;
-margin: 20px 0 15px;
-
-}
-
-.register-link p a {
-  color: #333;
-  text-decoration: none;
-  font-weight: 600;
-
-}
-
-.register-link p a:hover {
-
-  text-decoration: underline;
-
+.register-box {
+  background-color: #f9f9f9;
 }
