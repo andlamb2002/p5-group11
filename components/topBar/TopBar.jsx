@@ -114,11 +114,11 @@ class TopBar extends React.Component {
                 onChange={this.handleFileChange}
                 style={{ display: "none" }}
               />
-              <Button onClick={this.handleAddPhoto} variant="contained" style={{ backgroundColor: "#ccb4a4", marginRight: 10 }}>
+              <Button onClick={this.handleAddPhoto} variant="contained" style={{ backgroundColor: "#3f51b5", marginRight: 10 }}>
                 Add Photo
               </Button>
 
-              <Button onClick={this.handleLogout} variant="contained" style={{ backgroundColor: "#ccb4a4", marginRight: 10 }}>
+              <Button onClick={this.handleLogout} variant="contained" style={{ backgroundColor: "#3f51b5", marginRight: 10 }}>
                 Logout
               </Button>
               </>
