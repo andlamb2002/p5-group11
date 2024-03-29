@@ -1,253 +1,189 @@
 import React from 'react';
-import axios from 'axios';
-import { FaRegUser, FaUnlockAlt } from "react-icons/fa";
-import { Grid, Typography, Input, TextField } from "@mui/material";
+import {
+    Button,
+    Box,
+    TextField,
+    Alert,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+    Typography
+} from '@mui/material';
 import './loginRegister.css';
+import axios from 'axios';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-
+/**
+ * Define TopBar, a React component of project #5
+ */
 class LoginRegister extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            failedLogin: "",
-            login_attempt: "malcolm",    //change to blank later
-            password_attempt: "",
-            register_name_attempt: "",
-            register_password_attempt: "",
-            occupation: "",
-            password_verify_attempt: "",
-            location: "",
-            description: "",
-            failedRegister: "",
-            first_name: "",
-            last_name: "",
-            user: null, // Initialize user to null
-            message: null
+            user: {
+                first_name: undefined,
+                last_name: undefined,
+                location: undefined,
+                description: undefined,
+                occupation: undefined,
+                login_name: undefined,
+                password: undefined,
+                password_repeat: undefined,
+            },
+            showLoginError: false,
+            showRegistrationError: false,
+            showRegistrationSuccess: false,
+            showRegistration: false
         };
+        this.handleLogin = this.handleLogin.bind(this);
+        this.handleRegister = this.handleRegister.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleShowRegistration = this.handleShowRegistration.bind(this);
     }
 
-    handleInputChange = (event) => {
-        this.setState({ [event.target.name]: event.target.value });
-    };
-
-    handleLoginNameChange = (event) => {
-        this.setState({ login_attempt: event.target.value });
-    };
-
-    handleLogin = (event) => {
-        event.preventDefault();
-
-        axios.post('/admin/login', { login_name: this.state.login_attempt , password: this.state.password_attempt})
-            .then(response => {
-                let user = response.data;
-                console.log(user);
-                this.props.setUserLoggedIn(true);
-                this.props.setTopName(`Hi ${response.data.first_name}`);
-                this.setState({ failedLogin: "", user}); //update user details in the state
-            })
-            .catch(error => {
-                this.setState({ message: 'Login failed. Please try again.' });
-                console.error('Login error:', error);
-            });
-    };
-
-    handleLogout = () => {
-        axios.post('/admin/logout')
-            .then(() => {
-                this.props.setUserLoggedIn(false);
-                this.props.setTopName('Please Login');
-                this.setState({ user: null });
-            })
-            .catch(error => {
-                console.error('Logout error:', error);
-            });
-    };
-
-    handleRegister = (event) => {
-        event.preventDefault();
-
-        if(this.state.register_password_attempt !== this.state.password_verify_attempt){
-            this.setState({ message: 'Password do not match' , failedRegister: "Passwords don't match" });
-            return;
-        }
-
-        axios.post('/user', {
-            login_name: this.state.register_name_attempt,
-            password: this.state.register_password_attempt,
-            occupation: this.state.occupation,
-            location: this.state.location,
-            description: this.state.description,
-            first_name: this.state.first_name,
-            last_name: this.state.last_name,
-        })
-        .then((response) => {
-            let user = response.data;
-            console.log(user);
-            this.props.setUserLoggedIn(true);
-            this.setState({ failedRegister: "", user });
-
-        })
-        .catch(error => {
-            // Handle registration error
-            console.error('Registration error:', error);
-            this.setState({ message: 'Registration failed. Please try again.' , failedRegister: err.response.data});
+    handleShowRegistration = () => {
+        const showRegistration = this.state.showRegistration;
+        this.setState({
+            showRegistration: !showRegistration
         });
     };
+    handleLogin = () => {
+        const currentState = JSON.stringify(this.state.user);
+        axios.post(
+            "/admin/login",
+            currentState,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then((response) =>
+            {
+                const user = response.data;
+                this.setState({
+                    showLoginError: false,
+                    showRegistrationSuccess: false,
+                    showRegistrationError: false,
+                });
+                this.props.changeUser(user);
+            })
+            .catch( error => {
+                this.setState({
+                    showLoginError: true,
+                    showRegistrationSuccess: false,
+                    showRegistrationError: false,
+                });
+                console.log(error);
+            });
+    };
 
+    handleRegister = () => {
+        if (this.state.password !== this.state.password_repeat){
+            return;
+        }
+        const currentState = JSON.stringify(this.state.user);
+        axios.post(
+            "/user/",
+            currentState,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then((response) =>
+            {
+                const user = response.data;
+                this.setState({
+                    showRegistrationSuccess: true,
+                    showRegistrationError: false,
+                    showLoginError: false,
+                    showRegistration: false
+                });
+                this.props.changeUser(user);
+            })
+            .catch( error => {
+                this.setState({
+                    showRegistrationError: true,
+                    showLoginError: false,
+                    showRegistrationSuccess: false,
+                });
+                console.log(error);
+            });
+    };
+
+    handleChange(event){
+        this.setState((state) => {state.user[event.target.id] = event.target.value;});
+    }
+    componentDidMount() {
+        //this.handleAppInfoChange();
+    }
     render() {
-        return (
-
-            <div className='wrapper'>
-                <div className="form-container">
-                    <form>
-                        <h1>Login</h1>
-                        <div className='input-box'>
-                            <input type='text'
-                                name='login_attempt'
-                                value={this.state.login_attempt}
-                                onChange={this.handleInputChange}
-                                placeholder='Username'
-                                required
-                            />
-                            <FaRegUser className='icon' />
-                        </div>
-                        <br />
-                        <div className='input-box'>
-                            <input type='password'
-                                name='password_attempt'
-                                value={this.state.password_attempt}
-                                onChange={this.handleInputChange}
-                                placeholder='Password'
-                                required />
-                            <FaUnlockAlt className='icon' />
-                        </div>
-                        <div className='message-div'>
-                            {this.state.message && <p className='message'>{this.state.message}</p>}
-                        </div>
-                        <button
-                            type='submit'
-                            onClick={this.handleLogin}>
+        return this.state.user ? (
+            <div>
+                <Box component="form" autoComplete="off">
+                    {this.state.showLoginError && <Alert severity="error">Login Failed</Alert>}
+                    {this.state.showRegistrationError && <Alert severity="error">Registration Failed</Alert>}
+                    {this.state.showRegistrationSuccess && <Alert severity="success">Registration Succeeded</Alert>}
+                    <div>
+                        <TextField id="login_name" label="Login Name" variant="outlined" fullWidth
+                                   margin="normal" required={true} onChange={this.handleChange}/>
+                    </div>
+                    <div>
+                        <TextField id="password" label="Password" variant="outlined" fullWidth
+                                   margin="normal" type="password" required={true} onChange={this.handleChange}/>
+                    </div>
+                    <Box mb={2}>
+                        <Button type="submit" variant="contained" onClick={this.handleLogin}>
                             Login
-                        </button>
-                        
-                        
-                    </form>
-                </div>
-
-                <div className="form-container">
-                    <form>
-                        <Typography variant="h5">Register</Typography>
-                        <Typography variant="body1" color="error">
-                            {this.state.failedRegister}
-                        </Typography>
-                        <div className="input-box">
-                            <input
-                                type="text"
-                                name="first_name"
-                                value={this.state.first_name}
-                                onChange={this.handleInputChange}
-                                placeholder='First name'
-                                required
-                            />
-                            
-                        </div>
-                        <div className='input-box'>
-                            <input
-                                type='text'
-                                name="last_name"
-                                value={this.state.last_name}
-                                onChange={this.handleInputChange}
-                                placeholder='Last Name'
-                                required
-                            />
-
-                        </div>
-                        <div className='input-box'>
-                            <input
-                                type='text'
-                                name="register_name_attempt"
-                                value={this.state.register_name_attempt}
-                                onChange={this.handleInputChange}
-                                placeholder='User Name'
-                                required
-                            />
-                            
-                            <FaRegUser className='icon' />
-                        </div>
-
-                        <div className="input-box">
-                            <input
-                                type="password"
-                                name="register_password_attempt"
-                                value={this.state.register_password_attempt}
-                                onChange={this.handleInputChange}
-                                placeholder='Password'
-                                required
-                            />
-                            <FaUnlockAlt className='icon' />
-                        </div>
-                        <div className="input-box">
-                            <input
-                                type="password"
-                                name="password_verify_attempt"
-                                value={this.state.password_verify_attempt}
-                                onChange={this.handleInputChange}
-                                placeholder='Verify Password'
-                                required
-                            />
-                            <FaUnlockAlt className='icon' />
-                        </div>
-                        <div className="input-box">
-                            <input
-                                type="text"
-                                name="location"
-                                value={this.state.location}
-                                onChange={this.handleInputChange}
-                                placeholder='Where are you from'
-                                required
-                            />
-                        </div>
-                        <div className="input-box">
-                            <input
-                                type="text"
-                                name="description"
-                                value={this.state.description}
-                                onChange={this.handleInputChange}
-                                placeholder='Describe yourself'
-                                required
-                            />
-                        </div>
-                        <div className="input-box">
-                            <input
-                                type="text"
-                                name="occupation"
-                                value={this.state.occupation}
-                                onChange={this.handleInputChange}
-                                placeholder='Occupation'
-                                required
-                            />
-                        </div>
-
-
-
-                        <div className='message-div'>
-                            {this.state.message && <p className='message'>{this.state.message}</p>}
-                        </div>
-
-
-
-
-                        <button
-                            type='submit'
-                            onClick={this.handleRegister}>
-                            Register
-                        </button>
-                        <div className='login-link'>
-                            <p>Already have an account? <a href="#">Login</a></p>
-                        </div>
-                    </form>
-                </div>
+                        </Button>
+                    </Box>
+                    
+                    <Accordion expanded={this.state.showRegistration} onChange={this.handleShowRegistration}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                        >
+                            <Typography>User Registration</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Box>
+                                <div>
+                                    <TextField id="password_repeat" label="Repeat Password" variant="outlined" fullWidth
+                                               margin="normal" type="password" required={this.state.showRegistration} onChange={this.handleChange}/>
+                                </div>
+                                <div>
+                                    <TextField id="first_name" label="First Name" variant="outlined" fullWidth
+                                               margin="normal" autoComplete="off" required={this.state.showRegistration} onChange={this.handleChange}/>
+                                </div>
+                                <div>
+                                    <TextField id="last_name" label="Last Name" variant="outlined" fullWidth
+                                               margin="normal" required={this.state.showRegistration} onChange={this.handleChange}/>
+                                </div>
+                                <div>
+                                    <TextField id="location" label="Location" variant="outlined" fullWidth
+                                               margin="normal" onChange={this.handleChange}/>
+                                </div>
+                                <div>
+                                    <TextField id="description" label="Description" variant="outlined" multiline rows={4}
+                                               fullWidth margin="normal" onChange={this.handleChange}/>
+                                </div>
+                                <div>
+                                    <TextField id="occupation" label="Occupation" variant="outlined" fullWidth
+                                               margin="normal" onChange={this.handleChange}/>
+                                </div>
+                                <div>
+                                    <Button variant="contained" onClick={this.handleRegister}>
+                                        Register Me
+                                    </Button>
+                                </div>
+                            </Box>
+                        </AccordionDetails>
+                    </Accordion>
+                </Box>
             </div>
+        ) : (
+            <div/>
         );
     }
 }

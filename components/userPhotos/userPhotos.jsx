@@ -1,181 +1,200 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import {
-  Typography,
-  Card,
-  CardContent,
-  CardMedia,
+    Button, TextField,
+    ImageList, ImageListItem, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Typography
 } from '@mui/material';
+import './userPhotos.css';
 import axios from 'axios';
 
+
+/**
+ * Define UserPhotos, a React component of project #5
+ */
 class UserPhotos extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      userList: [],
-      photos: [],
-      user: null,
-      loading: true
-    };
-  }
-
-  componentDidMount() {
-    this.fetchUserPhotos();
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.match.params.userId !== this.props.match.params.userId) {
-      this.fetchUserPhotos();
+    constructor(props) {
+        super(props);
+        this.state = {
+            user_id : undefined,
+            photos: undefined,
+            new_comment: undefined,
+            add_comment: false,
+            current_photo_id: undefined
+        };
+        this.handleCancelAddComment = this.handleCancelAddComment.bind(this);
+        this.handleSubmitAddComment = this.handleSubmitAddComment.bind(this);
     }
 
-    else if (this.state.user && (!prevState.user || prevState.user._id !== this.state.user._id)) {
-      const topNameValue = `Photos of ${this.state.user.first_name} ${this.state.user.last_name}`;
-      this.props.setTopName(topNameValue);
-    }
-  }
-  
-  // eslint-disable-next-line class-methods-use-this
-  formatDate(dateString) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
-  }
-
-  async fetchUserPhotos() {
-    const userId = this.props.match.params.userId;
-    const userListUrl = '/user/list';
-    const userUrl = `/user/${userId}`;
-    const photosUrl = `/photosOfUser/${userId}`;
-
-    try {
-      const [userListResponse, userResponse, photosResponse] = await Promise.all([
-        axios.get(userListUrl),
-        axios.get(userUrl),
-        axios.get(photosUrl)
-      ]);
-
-      this.setState({
-        userList: userListResponse.data,
-        user: userResponse.data,
-        photos: photosResponse.data,
-        loading: false
-      });
-    } catch (error) {
-      console.error('Error fetching user photos:', error);
-    }
-  }
-  handleAddComment = async (event, photoId) => {
-    event.preventDefault();
-    const commentText = event.target.elements.commentText.value;
-    if (!commentText) {
-      console.error("Comment text cannot be empty");
-      return;
+    componentDidMount() {
+        const new_user_id = this.props.match.params.userId;
+        this.handleUserChange(new_user_id);
     }
 
-    try {
-      const response = await axios.post(`/commentsOfPhoto/${photoId}`, { comment: commentText });
-      const updatedPhoto = response.data;
+    componentDidUpdate() {
+        const new_user_id = this.props.match.params.userId;
+        const current_user_id = this.state.user_id;
+        if (current_user_id  !== new_user_id){
+            this.handleUserChange(new_user_id);
+        }
+    }
 
-      this.setState(state => {
-        const photos = state.photos.map(photo => {
-          if (photo._id === photoId) {
-            return updatedPhoto;
-          }
-          return photo;
+    handleUserChange(user_id){
+        axios.get("/photosOfUser/" + user_id)
+            .then((response) =>
+            {
+                console.log('then');
+                this.setState({
+                    user_id : user_id,
+                    photos: response.data
+                });
+            })
+            .catch(() => {
+                console.log('catch');
+            });
+        axios.get("/user/" + user_id)
+            .then((response) =>
+            {
+                const new_user = response.data;
+                const main_content = "User Photos for " + new_user.first_name + " " + new_user.last_name;
+                this.props.changeMainContent(main_content);
+            })
+            .catch(() =>
+            {
+                console.log('catch2');
+            });
+    }
+
+    handleNewCommentChange = (event) => {
+        this.setState({
+            new_comment: event.target.value
         });
-        return { photos };
-      });
+    };
 
-      event.target.elements.commentText.value = '';
-    } catch (error) {
-      console.error("Error adding comment:", error);
+    handleShowAddComment = (event) => {
+        const photo_id = event.target.attributes.photo_id.value;
+        this.setState({
+            add_comment: true,
+            current_photo_id: photo_id
+        });
+    };
+
+    handleCancelAddComment = () => {
+        this.setState({
+            add_comment: false,
+            new_comment: undefined,
+            current_photo_id: undefined
+        });
+    };
+
+    handleSubmitAddComment = () => {
+        const currentState = JSON.stringify({comment: this.state.new_comment});
+        const photo_id = this.state.current_photo_id;
+        const user_id = this.state.user_id;
+        axios.post("/commentsOfPhoto/" + photo_id,
+            currentState,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(() =>
+            {
+                this.setState({
+                    add_comment : false,
+                    new_comment: undefined,
+                    current_photo_id: undefined
+                });
+                axios.get("/photosOfUser/" + user_id)
+                    .then((response) =>
+                    {
+                        this.setState({
+                            photos: response.data
+                        });
+                    });
+            })
+            .catch( error => {
+                console.log(error);
+            });
+    };
+
+    render() {
+        return this.state.user_id ? (
+            <div>
+                <div>
+                    <Button variant="contained" component="a" href={"#/users/" + this.state.user_id}>
+                        User Detail
+                    </Button>
+                </div>
+                <ImageList variant="masonry" cols={1} gap={8}>
+                    {this.state.photos ? this.state.photos.map((item) => (
+                        <div key={item._id}>
+                            <TextField label="Photo Date" variant="outlined" disabled fullWidth margin="normal"
+                                       value={item.date_time} />
+                            <ImageListItem key={item.file_name}>
+                                <img
+                                    src={`images/${item.file_name}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                                    srcSet={`images/${item.file_name}?w=164&h=164&fit=crop&auto=format`}
+                                    alt={item.file_name}
+                                    loading="lazy"
+                                />
+                            </ImageListItem>
+                            <div>
+                            {item.comments ?
+                                item.comments.map((comment) => (
+                                    <div key={comment._id}>
+                                        <TextField label="Comment Date" variant="outlined" disabled fullWidth
+                                                   margin="normal" value={comment.date_time} />
+                                        <TextField label="User" variant="outlined" disabled fullWidth
+                                                   margin="normal"
+                                                   value={comment.user.first_name + " " + comment.user.last_name}
+                                                   component="a" href={"#/users/" + comment.user._id}>
+                                        </TextField>
+                                        <TextField label="Comment" variant="outlined" disabled fullWidth
+                                                   margin="normal" multiline rows={4} value={comment.comment} />
+                                    </div>
+                                ))
+                                : (
+                                    <div>
+                                        <Typography>No Comments</Typography>
+                                    </div>
+                                )}
+                                <Button photo_id={item._id} variant="contained" onClick={this.handleShowAddComment}>
+                                    Add Comment
+                                </Button>
+                            </div>
+                        </div>
+                    )) : (
+                        <div>
+                            <Typography>No Photos</Typography>
+                        </div>
+                    )}
+                </ImageList>
+                <Dialog open={this.state.add_comment}>
+                    <DialogTitle>Add Comment</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Enter New Comment for Photo
+                        </DialogContentText>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="comment"
+                            label="Comment"
+                            multiline rows={4}
+                            fullWidth
+                            variant="standard"
+                            onChange={this.handleNewCommentChange}
+                            defaultValue={this.state.new_comment}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => {this.handleCancelAddComment();}}>Cancel</Button>
+                        <Button onClick={() => {this.handleSubmitAddComment();}}>Add</Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
+        ) : (
+            <div/>
+        );
     }
-  };
-
-  render() {
-    const { userList, photos, user, loading } = this.state;
-
-    return (
-        <div>
-          <Typography variant="h4">Photos</Typography>
-
-          {loading ? (
-              <Typography variant="body1">Loading photos...</Typography>
-          ) : (
-              photos.map(photo => (
-                  <Card key={photo._id} style={{ marginBottom: '20px' }}>
-                    <Typography variant="body1">
-                      Name: {user.first_name} {user.last_name}<br />
-                      Uploaded: {this.formatDate(photo.date_time)}<br />
-                    </Typography>
-                    <CardMedia
-                        component="img"
-                        height="100%"
-                        image={`/images/${photo.file_name}`}
-                        alt={`Photo of ${user.first_name} ${user.last_name}`}
-                        style={{objectFit: 'cover', width: '50%', height: '50%'}}
-                    />
-                    <CardContent>
-                      <Typography variant="h6" gutterBottom>
-                        Comments:
-                      </Typography>
-                      {photo.comments && photo.comments.length > 0 ? (
-                          photo.comments.map((comment) => {
-                            const commentedUser = userList.find((user) => user._id === comment.user_id);
-                            return commentedUser ? (
-                                <div key={comment._id} style={{ marginBottom: '10px' }}>
-                                  <Typography variant="subtitle2" style={{ fontWeight: 'bold' }}>
-                                    {commentedUser.first_name} {commentedUser.last_name}
-                                  </Typography>
-                                  <Typography variant="body2" style={{ color: 'text.secondary' }}>
-                                    ({this.formatDate(comment.date_time)}):
-                                  </Typography>
-                                  <Typography variant="body1" style={{ marginTop: '4px' }}>
-                                    {comment.comment}
-                                  </Typography>
-                                </div>
-                            ) : null;
-                          })
-                      ) : (
-                          <Typography variant="body1">No comments for this photo.</Typography>
-                      )}
-                      <div style={{ marginTop: '20px', borderTop: '1px solid #e0e0e0', paddingTop: '16px' }}>
-                        <form onSubmit={(event) => this.handleAddComment(event, photo._id)}>
-                          <input
-                              type="text"
-                              placeholder="Add a comment..."
-                              name="commentText"
-                              style={{
-                                width: '100%',
-                                padding: '8px',
-                                marginBottom: '8px',
-                                borderRadius: '4px',
-                                border: '1px solid #e0e0e0',
-                              }}
-                          />
-                          <button
-                              type="submit"
-                              style={{
-                                padding: '10px 20px',
-                                border: 'none',
-                                borderRadius: '4px',
-                                backgroundColor: '#3f51b5',
-                                color: 'white',
-                                cursor: 'pointer',
-                              }}
-                          >
-                            Submit
-                          </button>
-                        </form>
-                      </div>
-                    </CardContent>
-
-
-                  </Card>
-              ))
-          )}
-        </div>
-    );
-  }
 }
-
 export default UserPhotos;
