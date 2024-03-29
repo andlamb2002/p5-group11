@@ -84,6 +84,10 @@ class TopBar extends React.Component {
     return this.state.app_info ? (
       <AppBar className="topbar-appBar" position="absolute">
         <Toolbar>
+            <Typography variant="h5" color="white" marginRight={20}>
+              Group 11   |
+            </Typography>
+
             <Typography variant="h5" component="div" sx={{ flexGrow: 0 }} color="inherit">
                 {
                 this.props.user ?
@@ -103,7 +107,8 @@ class TopBar extends React.Component {
                         >
                             <span>{"Hi " + this.props.user.first_name}</span>
                             <Divider orientation="vertical" flexItem/>
-                            <Button variant="contained" onClick={this.handleLogout}>Logout</Button>
+
+
                             <Divider orientation="vertical" flexItem/>
                             <Button
                                 component = "label"
@@ -127,13 +132,18 @@ class TopBar extends React.Component {
                                             <div/>
                                 }
                             </Snackbar>
+                
                         </Box>
+
                     )
                 :
                     ("Please Login")
                 }
             </Typography>
             <Typography variant="h5" component="div" sx={{ flexGrow: 1 }} color="inherit" align="center">{this.props.main_content}</Typography>
+            <Box sx={{ mx: 2 }} /> {/* Space */}
+            <Button variant="contained" onClick={this.handleLogout} sx={{ backgroundColor: 'red'}}>Logout</Button>
+            <Box sx={{ mx: 2 }} /> {/* Space */}
             <Typography variant="h5" component="div" sx={{ flexGrow: 0 }} color="inherit">Version: {this.state.app_info.version}</Typography>
         </Toolbar>
       </AppBar>
@@ -144,3 +154,9 @@ class TopBar extends React.Component {
 }
 
 export default TopBar;
+
+
+
+
+
+
