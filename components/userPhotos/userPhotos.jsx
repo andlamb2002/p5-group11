@@ -7,7 +7,6 @@ import {
   CardMedia,
 } from '@mui/material';
 import axios from 'axios';
-import TopBar from '../topBar/TopBar';
 
 class UserPhotos extends React.Component {
   constructor(props) {
@@ -24,12 +23,18 @@ class UserPhotos extends React.Component {
     this.fetchUserPhotos();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevProps.match.params.userId !== this.props.match.params.userId) {
       this.fetchUserPhotos();
     }
-  }
 
+    else if (this.state.user && (!prevState.user || prevState.user._id !== this.state.user._id)) {
+      const topNameValue = `Photos of ${this.state.user.first_name} ${this.state.user.last_name}`;
+      this.props.setTopName(topNameValue);
+    }
+  }
+  
+  // eslint-disable-next-line class-methods-use-this
   formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
     return new Date(dateString).toLocaleDateString('en-US', options);
@@ -40,20 +45,6 @@ class UserPhotos extends React.Component {
     const userListUrl = '/user/list';
     const userUrl = `/user/${userId}`;
     const photosUrl = `/photosOfUser/${userId}`;
-
-    /*
-    Promise.all([fetchModel(userUrl), fetchModel(photosUrl)])
-      .then(([userResponse, photosResponse]) => {
-        this.setState({
-          user: userResponse.data,
-          photos: photosResponse.data,
-          loading: false
-        });
-      })
-      .catch(error => {
-        console.error('Error fetching user photos:', error);
-      });
-      */
 
     try {
       const [userListResponse, userResponse, photosResponse] = await Promise.all([
@@ -72,14 +63,39 @@ class UserPhotos extends React.Component {
       console.error('Error fetching user photos:', error);
     }
   }
+  handleAddComment = async (event, photoId) => {
+    event.preventDefault();
+    const commentText = event.target.elements.commentText.value;
+    if (!commentText) {
+      console.error("Comment text cannot be empty");
+      return;
+    }
+
+    try {
+      const response = await axios.post(`/commentsOfPhoto/${photoId}`, { comment: commentText });
+      const updatedPhoto = response.data;
+
+      this.setState(state => {
+        const photos = state.photos.map(photo => {
+          if (photo._id === photoId) {
+            return updatedPhoto;
+          }
+          return photo;
+        });
+        return { photos };
+      });
+
+      event.target.elements.commentText.value = '';
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
+  };
 
   render() {
     const { userList, photos, user, loading } = this.state;
-    const topNameValue = user ? `Photos of ${user.first_name} ${user.last_name}` : '';
 
     return (
         <div>
-          <TopBar topName={topNameValue}/>
           <Typography variant="h4">Photos</Typography>
 
           {loading ? (
@@ -99,33 +115,61 @@ class UserPhotos extends React.Component {
                         style={{objectFit: 'cover', width: '50%', height: '50%'}}
                     />
                     <CardContent>
+                      <Typography variant="h6" gutterBottom>
+                        Comments:
+                      </Typography>
                       {photo.comments && photo.comments.length > 0 ? (
-                          <div>
-                            <Typography variant="h5">Comments:</Typography>
-                            {photo.comments.map(comment => {
-                              const commentedUser = userList.find(cUser => cUser._id === comment.user_id);
-                              if (commentedUser) {
-                                return (
-                                    <div key={comment._id}>
-                                      <Typography variant="body1">
-                                        <Link to={`/users/${comment.user_id}`}>
-                                          {commentedUser.first_name} {commentedUser.last_name}
-                                        </Link>
-                                        ( {this.formatDate(comment.date_time)} ):
-                                        {comment.comment}
-                                        <br />
-                                      </Typography>
-                                    </div>
-                                );
-                              } else {
-                                return null;
-                              }
-                            })}
-                          </div>
+                          photo.comments.map((comment) => {
+                            const commentedUser = userList.find((user) => user._id === comment.user_id);
+                            return commentedUser ? (
+                                <div key={comment._id} style={{ marginBottom: '10px' }}>
+                                  <Typography variant="subtitle2" style={{ fontWeight: 'bold' }}>
+                                    {commentedUser.first_name} {commentedUser.last_name}
+                                  </Typography>
+                                  <Typography variant="body2" style={{ color: 'text.secondary' }}>
+                                    ({this.formatDate(comment.date_time)}):
+                                  </Typography>
+                                  <Typography variant="body1" style={{ marginTop: '4px' }}>
+                                    {comment.comment}
+                                  </Typography>
+                                </div>
+                            ) : null;
+                          })
                       ) : (
                           <Typography variant="body1">No comments for this photo.</Typography>
                       )}
+                      <div style={{ marginTop: '20px', borderTop: '1px solid #e0e0e0', paddingTop: '16px' }}>
+                        <form onSubmit={(event) => this.handleAddComment(event, photo._id)}>
+                          <input
+                              type="text"
+                              placeholder="Add a comment..."
+                              name="commentText"
+                              style={{
+                                width: '100%',
+                                padding: '8px',
+                                marginBottom: '8px',
+                                borderRadius: '4px',
+                                border: '1px solid #e0e0e0',
+                              }}
+                          />
+                          <button
+                              type="submit"
+                              style={{
+                                padding: '10px 20px',
+                                border: 'none',
+                                borderRadius: '4px',
+                                backgroundColor: '#3f51b5',
+                                color: 'white',
+                                cursor: 'pointer',
+                              }}
+                          >
+                            Submit
+                          </button>
+                        </form>
+                      </div>
                     </CardContent>
+
+
                   </Card>
               ))
           )}
