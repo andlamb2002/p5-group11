@@ -1,3 +1,4 @@
+import './userPhotos.css';
 import React from 'react';
 import {
   Typography,
@@ -153,6 +154,7 @@ class UserPhotos extends React.Component {
                           />
                           <button
                               type="submit"
+                              className="submitButton"
                               style={{
                                 padding: '10px 20px',
                                 border: 'none',
