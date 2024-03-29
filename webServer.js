@@ -278,6 +278,11 @@ app.get("/test/:p1", function (request, response) {
  * URL /user/list - Returns all the User objects.
  */
 app.get("/user/list", function (request, response) {
+  if (!request.session.user) {
+    response.status(401).send('Unauthorized - Please log in.');
+    return; 
+  }
+
   User.find({}, '_id first_name last_name', (err, users) => {
     if (err) {
       console.error("Error in /user/list:", err);
@@ -292,6 +297,11 @@ app.get("/user/list", function (request, response) {
  * URL /user/:id - Returns the information for User (id).
  */
 app.get("/user/:id", function (request, response) {
+  if (!request.session.user) {
+    response.status(401).send('Unauthorized - Please log in.');
+    return;
+  }
+
   User.findById(request.params.id, '_id first_name last_name location description occupation', (err, user) => {
     if (err || !user) {
       console.log("User with _id:" + request.params.id + " not found.");
@@ -306,6 +316,15 @@ app.get("/user/:id", function (request, response) {
  * URL /photosOfUser/:id - Returns the Photos for User (id).
  */
 app.get("/photosOfUser/:id", function (request, response) {
+  if (!request.session.user) {
+    response.status(401).send('Unauthorized - Please log in.');
+    return;
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(request.params.id)) {
+    response.status(400).send("Invalid user ID.");
+    return;
+  }
   Photo.find({ user_id: request.params.id })
     .select('_id file_name date_time user_id comments') 
     .exec((err, photos) => {

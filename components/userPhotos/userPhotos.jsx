@@ -63,6 +63,33 @@ class UserPhotos extends React.Component {
       console.error('Error fetching user photos:', error);
     }
   }
+  handleAddComment = async (event, photoId) => {
+    event.preventDefault();
+    const commentText = event.target.elements.commentText.value;
+    if (!commentText) {
+      console.error("Comment text cannot be empty");
+      return;
+    }
+
+    try {
+      const response = await axios.post(`/commentsOfPhoto/${photoId}`, { comment: commentText });
+      const updatedPhoto = response.data;
+
+      this.setState(state => {
+        const photos = state.photos.map(photo => {
+          if (photo._id === photoId) {
+            return updatedPhoto;
+          }
+          return photo;
+        });
+        return { photos };
+      });
+
+      event.target.elements.commentText.value = '';
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
+  };
 
   render() {
     const { userList, photos, user, loading } = this.state;
@@ -88,33 +115,61 @@ class UserPhotos extends React.Component {
                         style={{objectFit: 'cover', width: '50%', height: '50%'}}
                     />
                     <CardContent>
+                      <Typography variant="h6" gutterBottom>
+                        Comments:
+                      </Typography>
                       {photo.comments && photo.comments.length > 0 ? (
-                          <div>
-                            <Typography variant="h5">Comments:</Typography>
-                            {photo.comments.map(comment => {
-                              const commentedUser = userList.find(cUser => cUser._id === comment.user_id);
-                              if (commentedUser) {
-                                return (
-                                    <div key={comment._id}>
-                                      <Typography variant="body1">
-                                        <Link to={`/users/${comment.user_id}`}>
-                                          {commentedUser.first_name} {commentedUser.last_name}
-                                        </Link>
-                                        ( {this.formatDate(comment.date_time)} ):
-                                        {comment.comment}
-                                        <br />
-                                      </Typography>
-                                    </div>
-                                );
-                              } else {
-                                return null;
-                              }
-                            })}
-                          </div>
+                          photo.comments.map((comment) => {
+                            const commentedUser = userList.find((user) => user._id === comment.user_id);
+                            return commentedUser ? (
+                                <div key={comment._id} style={{ marginBottom: '10px' }}>
+                                  <Typography variant="subtitle2" style={{ fontWeight: 'bold' }}>
+                                    {commentedUser.first_name} {commentedUser.last_name}
+                                  </Typography>
+                                  <Typography variant="body2" style={{ color: 'text.secondary' }}>
+                                    ({this.formatDate(comment.date_time)}):
+                                  </Typography>
+                                  <Typography variant="body1" style={{ marginTop: '4px' }}>
+                                    {comment.comment}
+                                  </Typography>
+                                </div>
+                            ) : null;
+                          })
                       ) : (
                           <Typography variant="body1">No comments for this photo.</Typography>
                       )}
+                      <div style={{ marginTop: '20px', borderTop: '1px solid #e0e0e0', paddingTop: '16px' }}>
+                        <form onSubmit={(event) => this.handleAddComment(event, photo._id)}>
+                          <input
+                              type="text"
+                              placeholder="Add a comment..."
+                              name="commentText"
+                              style={{
+                                width: '100%',
+                                padding: '8px',
+                                marginBottom: '8px',
+                                borderRadius: '4px',
+                                border: '1px solid #e0e0e0',
+                              }}
+                          />
+                          <button
+                              type="submit"
+                              style={{
+                                padding: '10px 20px',
+                                border: 'none',
+                                borderRadius: '4px',
+                                backgroundColor: '#3f51b5',
+                                color: 'white',
+                                cursor: 'pointer',
+                              }}
+                          >
+                            Submit
+                          </button>
+                        </form>
+                      </div>
                     </CardContent>
+
+
                   </Card>
               ))
           )}
