@@ -42,6 +42,32 @@ const app = express();
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const multer = require("multer");
+const bcrypt = require("bcrypt");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './images');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix);
+  }
+});
+
+
+
+const userSchema = new mongoose.Schema({
+  login_name: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  first_name: String,
+  last_name: String,
+  location: String,
+  description: String,
+  occupation: String
+});
+
+
+const upload = multer({ storage: storage });
 
 app.use(session({secret: "secretKey", resave: false, saveUninitialized: false}));
 app.use(bodyParser.json());
@@ -63,9 +89,112 @@ mongoose.connect("mongodb://127.0.0.1/project6", {
 // (http://expressjs.com/en/starter/static-files.html) do all the work for us.
 app.use(express.static(__dirname));
 
+app.post('/admin/login', function (request, response) {
+  const login_name = request.body.login_name;
+
+  User.findOne({login_name: login_name}, function(err, user) {
+      if (err) {
+          console.error('Error during user login:', err);
+          response.status(500).send(JSON.stringify(err));
+          return;
+      }
+      if (!user) {
+          response.status(400).send('Login failed');
+          return;
+      }
+      request.session.user = { _id: user._id, login_name: user.login_name };
+      response.send(user); 
+  });
+});
+
+
+
+
+
+app.post('/user', async function (request, response) {
+  const { login_name, password, first_name, last_name, location, description, occupation } = request.body;
+
+  try {
+      // Check if user already exists
+      const existingUser = await User.findOne({ login_name });
+      if (existingUser) {
+          return response.status(400).send('User already exists.');
+      }
+
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Create new user
+      const newUser = new User({
+          login_name,
+          password: hashedPassword,
+          first_name,
+          last_name,
+          location,
+          description,
+          occupation
+      });
+      await newUser.save();
+      
+      response.send('User registered successfully.');
+  } catch (error) {
+      console.error('Registration error:', error);
+      response.status(500).send('Registration failed. Please try again.');
+  }
+});
+
+
+
+
+
+
+
+app.post('/admin/logout', function (request, response) {
+  if (request.session.user) {
+    request.session.destroy(function(err) {
+      if (err) {
+        console.error('Logout error', err);
+          response.status(500).send(JSON.stringify(err));
+        } else {
+          response.send('Logged out');
+        }
+    });
+  } else {
+    response.status(400).send('Not logged in');
+  }
+});
+
+app.get('/check-login', function (request, response) {
+  if (request.session.user) {
+      response.send({ loggedIn: true, user: request.session.user });
+  } else {
+      response.send({ loggedIn: false });
+  }
+});
+
+app.post('/photos/new', upload.single('uploadedPhoto'), function (request, response) {
+  if (!request.file) {
+    return response.status(400).send('No file uploaded.');
+  }
+  const photo = new Photo({
+    file_name: request.file.filename,
+    date_time: new Date(),
+    user_id: request.session.user._id
+  });
+  photo.save()
+    .then(() => response.send('Photo uploaded successfully.'))
+    .catch(err => response.status(500).send(err));
+});
+
 app.get("/", function (request, response) {
   response.send("Simple web server of files from " + __dirname);
 });
+
+
+
+
+
+
 
 /**
  * Use express to handle argument passing in the URL. This .get will cause
