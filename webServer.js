@@ -55,7 +55,7 @@ const storage = multer.diskStorage({
 });
 
 
-
+/*
 const userSchema = new mongoose.Schema({
   login_name: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -65,6 +65,7 @@ const userSchema = new mongoose.Schema({
   description: String,
   occupation: String
 });
+*/
 
 
 const upload = multer({ storage: storage });
