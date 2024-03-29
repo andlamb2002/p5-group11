@@ -121,10 +121,10 @@ app.post('/commentsOfPhoto/:photo_id', function (request, response) {
       date_time: Date.now() // Current time
     };
     photo.comments.push(newComment);
-    photo.save(function (err, updatedPhoto) {
-      if (err) {
-        console.error('Error saving comment:', err);
-        response.status(500).send(JSON.stringify(err));
+    photo.save(function (commErr, updatedPhoto) {
+      if (commErr) {
+        console.error('Error saving comment:', commErr);
+        response.status(500).send(JSON.stringify(commErr));
         return;
       }
 

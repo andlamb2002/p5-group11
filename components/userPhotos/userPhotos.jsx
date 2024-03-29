@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import {
   Typography,
   Card,
@@ -120,7 +119,7 @@ class UserPhotos extends React.Component {
                       </Typography>
                       {photo.comments && photo.comments.length > 0 ? (
                           photo.comments.map((comment) => {
-                            const commentedUser = userList.find((user) => user._id === comment.user_id);
+                            const commentedUser = userList.find((cUser) => cUser._id === comment.user_id);
                             return commentedUser ? (
                                 <div key={comment._id} style={{ marginBottom: '10px' }}>
                                   <Typography variant="subtitle2" style={{ fontWeight: 'bold' }}>
