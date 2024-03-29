@@ -50,6 +50,7 @@ class TopBar extends React.Component {
     }
   };
 
+  // eslint-disable-next-line class-methods-use-this
   handleFileChange = (event) => {
     const file = event.target.files[0];
     if (!file) {
@@ -58,14 +59,15 @@ class TopBar extends React.Component {
     }
   
     const formData = new FormData();
-    formData.append("uploadedPhoto", file);
+    formData.append("uploadedphoto", file);
   
     axios.post("/photos/new", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     })
-    .then(response => {
+    .then(() => { 
+      this.props.setTopName('Photo uploaded successfully.');
       console.log("Photo uploaded successfully.");
     })
     .catch(error => {
@@ -112,7 +114,7 @@ class TopBar extends React.Component {
                 onChange={this.handleFileChange}
                 style={{ display: "none" }}
               />
-              <Button onClick={this.handleAddPhoto} variant="contained" style={{ backgroundColor: "#a4cccb", marginRight: 10 }}>
+              <Button onClick={this.handleAddPhoto} variant="contained" style={{ backgroundColor: "#ccb4a4", marginRight: 10 }}>
                 Add Photo
               </Button>
 

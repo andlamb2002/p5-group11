@@ -42,18 +42,20 @@ const app = express();
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const multer = require("multer");
+// const fs = require("fs");
+const path = require("path");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './images');
+    const uploadDir = path.join(__dirname, 'images'); 
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix);
+    cb(null, Date.now() + '-' + file.originalname);
   }
 });
 
-const upload = multer({ storage: storage });
+const processFormBody = multer({ storage: storage });
 
 app.use(session({secret: "secretKey", resave: false, saveUninitialized: false}));
 app.use(bodyParser.json());
@@ -116,16 +118,17 @@ app.get('/check-login', function (request, response) {
   }
 });
 
-app.post('/photos/new', upload.single('uploadedPhoto'), function (request, response) {
+app.post('/photos/new', processFormBody.single('uploadedphoto'), function (request, response) {
   if (!request.file) {
-    return response.status(400).send('No file uploaded.');
+    response.status(400).send('No file uploaded.');
+    return;
   }
-  const photo = new Photo({
+  const newPhoto = new Photo({
     file_name: request.file.filename,
     date_time: new Date(),
     user_id: request.session.user._id
   });
-  photo.save()
+  newPhoto.save()
     .then(() => response.send('Photo uploaded successfully.'))
     .catch(err => response.status(500).send(err));
 });
