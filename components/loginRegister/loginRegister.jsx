@@ -8,7 +8,7 @@ class LoginRegister extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            loginName: '', 
+            loginName: 'malcolm', // Change to blank later 
             message: null
         };
     }

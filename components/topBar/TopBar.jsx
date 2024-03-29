@@ -12,6 +12,7 @@ class TopBar extends React.Component {
     this.state={
       app_info: null,
     };
+    this.fileInputRef = React.createRef(); 
   }
 
   componentDidMount() {
@@ -40,9 +41,39 @@ class TopBar extends React.Component {
         .catch(error => {
             console.error('Logout error:', error);
         });
-};
+  };
 
+  handleAddPhoto = () => {
+    console.log('Add Photo button clicked');
+    if (this.fileInputRef.current) {
+      this.fileInputRef.current.click();
+    }
+  };
+
+  // eslint-disable-next-line class-methods-use-this
+  handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      console.error("No file selected.");
+      return;
+    }
   
+    const formData = new FormData();
+    formData.append("uploadedphoto", file);
+  
+    axios.post("/photos/new", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then(() => { 
+      this.props.setTopName('Photo uploaded successfully.');
+      console.log("Photo uploaded successfully.");
+    })
+    .catch(error => {
+      console.error("Error uploading photo:", error);
+    });
+  };
 
   render() {
     const toolbarStyle = {
@@ -75,9 +106,23 @@ class TopBar extends React.Component {
 
           <Typography>
             {userIsLoggedIn && (
+              <>
+              <input
+                type="file"
+                accept="image/*"
+                ref={this.fileInputRef}
+                onChange={this.handleFileChange}
+                style={{ display: "none" }}
+              />
+              <Button onClick={this.handleAddPhoto} variant="contained" style={{ backgroundColor: "#ccb4a4", marginRight: 10 }}>
+                Add Photo
+              </Button>
+
               <Button onClick={this.handleLogout} variant="contained" style={{ backgroundColor: "#ccb4a4", marginRight: 10 }}>
                 Logout
               </Button>
+              </>
+              
             )}
           </Typography>
           

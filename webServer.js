@@ -41,7 +41,20 @@ const app = express();
 
 const session = require("express-session");
 const bodyParser = require("body-parser");
-// const multer = require("multer");
+const multer = require("multer");
+const path = require("path");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = path.join(__dirname, 'images'); 
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const processFormBody = multer({ storage: storage });
 
 app.use(session({secret: "secretKey", resave: false, saveUninitialized: false}));
 app.use(bodyParser.json());
@@ -141,6 +154,21 @@ app.get('/check-login', function (request, response) {
   } else {
       response.send({ loggedIn: false });
   }
+});
+
+app.post('/photos/new', processFormBody.single('uploadedphoto'), function (request, response) {
+  if (!request.file) {
+    response.status(400).send('No file uploaded.');
+    return;
+  }
+  const newPhoto = new Photo({
+    file_name: request.file.filename,
+    date_time: new Date(),
+    user_id: request.session.user._id
+  });
+  newPhoto.save()
+    .then(() => response.send('Photo uploaded successfully.'))
+    .catch(err => response.status(500).send(err));
 });
 
 app.get("/", function (request, response) {
