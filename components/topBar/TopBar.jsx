@@ -1,5 +1,5 @@
 import React from 'react';
-import {  AppBar, Toolbar, Typography} from '@mui/material';
+import { Button, AppBar, Toolbar, Typography} from '@mui/material';
 import './TopBar.css';
 import axios from 'axios';
 
@@ -12,10 +12,12 @@ class TopBar extends React.Component {
     this.state={
       app_info: null,
     };
+    this.fileInputRef = React.createRef(); 
   }
 
   componentDidMount() {
     this.handleAppInfoChange();
+    this.checkLoginStatus();
   }
 
   
@@ -30,7 +32,68 @@ class TopBar extends React.Component {
       console.error('Error fetching app info:', error);
     });
   }
+
+  handleLogout = () => {
+    axios.post('/admin/logout')
+        .then(() => { 
+            this.props.setUserLoggedIn(false);
+            this.props.setTopName('Please Login');
+        })
+        .catch(error => {
+            console.error('Logout error:', error);
+        });
+  };
+
+  handleAddPhoto = () => {
+    console.log('Add Photo button clicked');
+    if (this.fileInputRef.current) {
+      this.fileInputRef.current.click();
+    }
+  };
+
+  handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      console.error("No file selected.");
+      return;
+    }
   
+    const formData = new FormData();
+    formData.append("uploadedPhoto", file);
+  
+    axios.post("/photos/new", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then(response => {
+      console.log("Photo uploaded successfully.");
+    })
+    .catch(error => {
+      console.error("Error uploading photo:", error);
+    });
+  };
+
+
+  
+  checkLoginStatus() {
+    axios.get('/check-login')
+        .then(response => {
+            if (response.data.loggedIn) {
+                this.props.setUserLoggedIn(true);
+                this.props.setTopName(`Hi ${response.data.user.first_name}`);
+            } else {
+                this.props.setUserLoggedIn(false);
+                this.props.setTopName('Please Login');
+            }
+        })
+        .catch(error => {
+            console.error('Error checking login status:', error);
+        });
+}
+
+
+
 
   render() {
     const toolbarStyle = {
@@ -40,7 +103,7 @@ class TopBar extends React.Component {
       width: '90%',
     };
 
-    
+    const { userIsLoggedIn } = this.props;
 
     return (
       <AppBar className="topbar-appBar" position="absolute">
@@ -60,6 +123,28 @@ class TopBar extends React.Component {
               Version: {this.state.app_info.__v}
             </Typography>
           )}
+
+          <Typography>
+            {userIsLoggedIn && (
+              <>
+              <input
+                type="file"
+                accept="image/*"
+                ref={this.fileInputRef}
+                onChange={this.handleFileChange}
+                style={{ display: "none" }}
+              />
+              <Button onClick={this.handleAddPhoto} variant="contained" style={{ backgroundColor: "#a4cccb", marginRight: 10 }}>
+                Add Photo
+              </Button>
+
+              <Button onClick={this.handleLogout} variant="contained" style={{ backgroundColor: "#ccb4a4", marginRight: 10 }}>
+                Logout
+              </Button>
+              </>
+              
+            )}
+          </Typography>
           
 
         </Toolbar>
