@@ -14,7 +14,7 @@ import axios from 'axios';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 /**
- * Define TopBar, a React component of project #5
+ * Define LoginRegister, a React component for user login and registration
  */
 class LoginRegister extends React.Component {
     constructor(props) {
@@ -47,6 +47,7 @@ class LoginRegister extends React.Component {
             showRegistration: !showRegistration
         });
     };
+
     handleLogin = () => {
         const currentState = JSON.stringify(this.state.user);
         axios.post(
@@ -119,68 +120,68 @@ class LoginRegister extends React.Component {
     }
     render() {
         return this.state.user ? (
-            <div>
-                <Box component="form" autoComplete="off">
-                    {this.state.showLoginError && <Alert severity="error">Login Failed</Alert>}
-                    {this.state.showRegistrationError && <Alert severity="error">Registration Failed</Alert>}
-                    {this.state.showRegistrationSuccess && <Alert severity="success">Registration Succeeded</Alert>}
-                    <div>
-                        <TextField id="login_name" label="Login Name" variant="outlined" fullWidth
-                                   margin="normal" required={true} onChange={this.handleChange}/>
-                    </div>
-                    <div>
-                        <TextField id="password" label="Password" variant="outlined" fullWidth
-                                   margin="normal" type="password" required={true} onChange={this.handleChange}/>
-                    </div>
-                    <Box mb={2}>
-                        <Button type="submit" variant="contained" onClick={this.handleLogin}>
-                            Login
-                        </Button>
+            <div className="login-register-container">
+                <div className="login-box">
+                    <Typography>Login</Typography>
+                    <Box component="form" autoComplete="off">
+                        {this.state.showLoginError && <Alert severity="error">Login Failed</Alert>}
+                        <div>
+                            <TextField id="login_name" label="Login Name" variant="outlined" fullWidth
+                                       margin="normal" required={true} onChange={this.handleChange}/>
+                        </div>
+                        <div>
+                            <TextField id="password" label="Password" variant="outlined" fullWidth
+                                       margin="normal" type="password" required={true} onChange={this.handleChange}/>
+                        </div>
+                        <Box mb={2}>
+                            <Button type="submit" variant="contained" onClick={this.handleLogin}>
+                                Login
+                            </Button>
+                        </Box>
                     </Box>
-                    
-                    <Accordion expanded={this.state.showRegistration} onChange={this.handleShowRegistration}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel1a-content"
-                            id="panel1a-header"
-                        >
-                            <Typography>User Registration</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Box>
-                                <div>
-                                    <TextField id="password_repeat" label="Repeat Password" variant="outlined" fullWidth
-                                               margin="normal" type="password" required={this.state.showRegistration} onChange={this.handleChange}/>
-                                </div>
-                                <div>
-                                    <TextField id="first_name" label="First Name" variant="outlined" fullWidth
-                                               margin="normal" autoComplete="off" required={this.state.showRegistration} onChange={this.handleChange}/>
-                                </div>
-                                <div>
-                                    <TextField id="last_name" label="Last Name" variant="outlined" fullWidth
-                                               margin="normal" required={this.state.showRegistration} onChange={this.handleChange}/>
-                                </div>
-                                <div>
-                                    <TextField id="location" label="Location" variant="outlined" fullWidth
-                                               margin="normal" onChange={this.handleChange}/>
-                                </div>
-                                <div>
-                                    <TextField id="description" label="Description" variant="outlined" multiline rows={4}
-                                               fullWidth margin="normal" onChange={this.handleChange}/>
-                                </div>
-                                <div>
-                                    <TextField id="occupation" label="Occupation" variant="outlined" fullWidth
-                                               margin="normal" onChange={this.handleChange}/>
-                                </div>
-                                <div>
-                                    <Button variant="contained" onClick={this.handleRegister}>
-                                        Register Me
-                                    </Button>
-                                </div>
-                            </Box>
-                        </AccordionDetails>
-                    </Accordion>
-                </Box>
+                </div>
+                <div className="register-box">
+                    <Typography>User Registration</Typography>
+                    <Box>
+                        <div>
+                            <TextField id="login_name" label="Login Name" variant="outlined" fullWidth
+                                       margin="normal" required={this.state.showRegistration} onChange={this.handleChange}/>
+                        </div>
+                        <div>
+                            <TextField id="password" label="Password" variant="outlined" fullWidth
+                                       margin="normal" type="password" required={this.state.showRegistration} onChange={this.handleChange}/>
+                        </div>
+                        <div>
+                            <TextField id="password_repeat" label="Repeat Password" variant="outlined" fullWidth
+                                       margin="normal" type="password" required={this.state.showRegistration} onChange={this.handleChange}/>
+                        </div>
+                        <div>
+                            <TextField id="first_name" label="First Name" variant="outlined" fullWidth
+                                       margin="normal" autoComplete="off" required={this.state.showRegistration} onChange={this.handleChange}/>
+                        </div>
+                        <div>
+                            <TextField id="last_name" label="Last Name" variant="outlined" fullWidth
+                                       margin="normal" required={this.state.showRegistration} onChange={this.handleChange}/>
+                        </div>
+                        <div>
+                            <TextField id="location" label="Location" variant="outlined" fullWidth
+                                       margin="normal" onChange={this.handleChange}/>
+                        </div>
+                        <div>
+                            <TextField id="description" label="Description" variant="outlined" multiline rows={4}
+                                       fullWidth margin="normal" onChange={this.handleChange}/>
+                        </div>
+                        <div>
+                            <TextField id="occupation" label="Occupation" variant="outlined" fullWidth
+                                       margin="normal" onChange={this.handleChange}/>
+                        </div>
+                        <div>
+                            <Button variant="contained" onClick={this.handleRegister}>
+                                Register Me
+                            </Button>
+                        </div>
+                    </Box>
+                </div>
             </div>
         ) : (
             <div/>
