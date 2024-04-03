@@ -67,6 +67,8 @@ class LoginRegister extends React.Component {
                     showRegistrationSuccess: false,
                     showRegistrationError: false,
                 });
+                window.location.href = `#/users/${user._id}`;
+
             })
             .catch( error => {
                 this.setState({
