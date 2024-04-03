@@ -4,14 +4,10 @@ import {
     Box,
     TextField,
     Alert,
-    Accordion,
-    AccordionSummary,
-    AccordionDetails,
     Typography
 } from '@mui/material';
 import './loginRegister.css';
 import axios from 'axios';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 /**
  * Define LoginRegister, a React component for user login and registration
@@ -28,13 +24,16 @@ class LoginRegister extends React.Component {
                 occupation: undefined,
                 login_name: undefined,
                 password: undefined,
+                register_login_name: undefined,
+                register_password: undefined,
                 password_repeat: undefined,
             },
             showLoginError: false,
             showRegistrationError: false,
             showRegistrationSuccess: false,
-            showRegistration: false
+            showRequiredFieldsWarning: false,
         };
+
         this.handleLogin = this.handleLogin.bind(this);
         this.handleRegister = this.handleRegister.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -42,9 +41,9 @@ class LoginRegister extends React.Component {
     }
 
     handleShowRegistration = () => {
-        const showRegistration = this.state.showRegistration;
         this.setState({
-            showRegistration: !showRegistration
+            showRegistrationError: false,
+            showRequiredFieldsWarning: false,
         });
     };
 
@@ -61,12 +60,13 @@ class LoginRegister extends React.Component {
             .then((response) =>
             {
                 const user = response.data;
+                console.log(user);
+                this.props.changeUser(user);
                 this.setState({
                     showLoginError: false,
                     showRegistrationSuccess: false,
                     showRegistrationError: false,
                 });
-                this.props.changeUser(user);
             })
             .catch( error => {
                 this.setState({
@@ -79,17 +79,33 @@ class LoginRegister extends React.Component {
     };
 
     handleRegister = () => {
-        if (this.state.password !== this.state.password_repeat){
+        if (this.state.user.register_password !== this.state.user.password_repeat){
+            this.setState({
+                showRegistrationError: true,
+                showRequiredFieldsWarning: false,
+            });
             return;
         }
-        const currentState = JSON.stringify(this.state.user);
+        //const currentState = JSON.stringify(this.state.user);
+
+        const currentState = {
+            first_name: this.state.user.first_name,
+            last_name: this.state.user.last_name,
+            location: this.state.user.location,
+            description: this.state.user.description,
+            occupation: this.state.user.occupation,
+            register_login_name: this.state.user.register_login_name,
+            register_password: this.state.user.password,
+            password_repeat: this.state.user.password_repeat,
+        };
+
         axios.post(
             "/user/",
             currentState,
             {
                 headers: {
                     'Content-Type': 'application/json',
-                }
+                },
             })
             .then((response) =>
             {
@@ -98,26 +114,37 @@ class LoginRegister extends React.Component {
                     showRegistrationSuccess: true,
                     showRegistrationError: false,
                     showLoginError: false,
-                    showRegistration: false
+                    showRequiredFieldsWarning: false,
+
                 });
                 this.props.changeUser(user);
+                window.location.href = `#/users/${user._id}`;
             })
             .catch( error => {
                 this.setState({
                     showRegistrationError: true,
                     showLoginError: false,
                     showRegistrationSuccess: false,
+                    showRequiredFieldsWarning: false,
                 });
-                console.log(error);
+                console.log(error.response.data);
             });
     };
 
     handleChange(event){
-        this.setState((state) => {state.user[event.target.id] = event.target.value;});
+        const {id, value} = event.target;
+        this.setState((prevState) => ({
+            user:{
+                ...prevState.user,
+                [id]: value
+            }
+        })
+        );
     }
     componentDidMount() {
         //this.handleAppInfoChange();
     }
+
     render() {
         return this.state.user ? (
             <div className="login-register-container">
@@ -142,26 +169,28 @@ class LoginRegister extends React.Component {
                 </div>
                 <div className="register-box">
                     <Typography>User Registration</Typography>
-                    <Box>
+                    <Box component="form" autoComplete="off">
+                        
+                        
                         <div>
-                            <TextField id="login_name" label="Login Name" variant="outlined" fullWidth
-                                       margin="normal" required={this.state.showRegistration} onChange={this.handleChange}/>
+                            <TextField id="register_login_name" label="Login Name" variant="outlined" fullWidth
+                                       margin="normal" required={true} onChange={this.handleChange}/>
                         </div>
                         <div>
-                            <TextField id="password" label="Password" variant="outlined" fullWidth
-                                       margin="normal" type="password" required={this.state.showRegistration} onChange={this.handleChange}/>
+                            <TextField id="register_password" label="Password" variant="outlined" fullWidth
+                                       margin="normal" type="password" required={true} onChange={this.handleChange}/>
                         </div>
                         <div>
                             <TextField id="password_repeat" label="Repeat Password" variant="outlined" fullWidth
-                                       margin="normal" type="password" required={this.state.showRegistration} onChange={this.handleChange}/>
+                                       margin="normal" type="password" required={true} onChange={this.handleChange}/>
                         </div>
                         <div>
                             <TextField id="first_name" label="First Name" variant="outlined" fullWidth
-                                       margin="normal" autoComplete="off" required={this.state.showRegistration} onChange={this.handleChange}/>
+                                       margin="normal" autoComplete="off" required={true} onChange={this.handleChange}/>
                         </div>
                         <div>
                             <TextField id="last_name" label="Last Name" variant="outlined" fullWidth
-                                       margin="normal" required={this.state.showRegistration} onChange={this.handleChange}/>
+                                       margin="normal" required={true} onChange={this.handleChange}/>
                         </div>
                         <div>
                             <TextField id="location" label="Location" variant="outlined" fullWidth
@@ -180,6 +209,9 @@ class LoginRegister extends React.Component {
                                 Register Me
                             </Button>
                         </div>
+                        {this.state.showRequiredFieldsWarning && <Alert severity = "warning">Please fill in all required fields.</Alert>}
+                        {this.state.showRegistrationSuccess && <Alert severity="success">Registration Succeeded</Alert>}
+                        {this.state.showRegistrationError && <Alert severity="error">Registration Failed</Alert>}
                     </Box>
                 </div>
             </div>

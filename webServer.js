@@ -169,8 +169,9 @@ app.post("/user", function (request, response) {
   const location = request.body.location || "";
   const description = request.body.description || "";
   const occupation = request.body.occupation || "";
-  const login_name = request.body.login_name || "";
-  const password = request.body.password || "";
+  const register_login_name = request.body.register_login_name || "";
+  const register_password = request.body.register_password || "";
+  const password_repeat = request.body.password_repeat || "";
 
   if (first_name === "") {
     console.error("Error in /user", first_name);
@@ -182,18 +183,23 @@ app.post("/user", function (request, response) {
     response.status(400).send("last_name is required");
     return;
   }
-  if (login_name === "") {
-    console.error("Error in /user", login_name);
-    response.status(400).send("login_name is required");
+  if (register_login_name === ""){
+    console.error("Error in /user", register_login_name);
+    response.status(400).send("Reg Login_name is required");
     return;
   }
-  if (password === "") {
-    console.error("Error in /user", password);
-    response.status(400).send("password is required");
+  if (register_password === ""){
+    console.error("Error in /user", register_password);
+    response.status(400).send("Reg password is required");
+    return;
+  }
+  if (password_repeat === ""){
+    console.error("Error in /user", password_repeat);
+    response.status(400).send("Verify password is required");
     return;
   }
 
-  User.exists({login_name: login_name}, function (err, returnValue){
+  User.exists({login_name: register_login_name}, function (err, returnValue){
     if (err){
       console.error("Error in /user", err);
       response.status(500).send();
@@ -209,8 +215,8 @@ app.post("/user", function (request, response) {
               location: location,
               description: description,
               occupation: occupation,
-              login_name: login_name,
-              password: password
+              login_name: register_login_name,
+              password: register_password
             })
             .then((user) => {
               request.session.user_id = user._id;
