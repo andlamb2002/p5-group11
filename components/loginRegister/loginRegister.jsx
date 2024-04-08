@@ -92,14 +92,14 @@ class LoginRegister extends React.Component {
         })
         .then(response => {
             if (response && response.data) {
-                const user = response.data;
+                const rUser = response.data;
                 this.setState({
                     showRegistrationSuccess: true,
                     showRegistrationError: false,
                     showRequiredFieldsWarning: false,
                 });
                 // Assuming you handle user redirection or state update upon successful registration
-                window.location.href = `#/users/${user._id}`;
+                window.location.href = `#/users/${rUser._id}`;
             } else {
                 console.error('Unexpected response format:', response);
             }
