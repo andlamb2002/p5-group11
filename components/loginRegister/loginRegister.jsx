@@ -25,7 +25,7 @@ class LoginRegister extends React.Component {
                 password_repeat: undefined,
             },
             loginName: '',
-            password: '', // Added password state for login
+            password: '', 
             message: null
         };
 
@@ -33,7 +33,7 @@ class LoginRegister extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleShowRegistration = this.handleShowRegistration.bind(this);
         this.handleLoginNameChange = this.handleLoginNameChange.bind(this);
-        this.handlePasswordChange = this.handlePasswordChange.bind(this); // Binding the new method
+        this.handlePasswordChange = this.handlePasswordChange.bind(this); 
     }
 
     handleShowRegistration = () => {
@@ -53,7 +53,7 @@ class LoginRegister extends React.Component {
 
     handleLogin = (event) => {
         event.preventDefault();
-        const { loginName, password } = this.state; // Destructure for easier access
+        const { loginName, password } = this.state; 
 
         axios.post('/admin/login', { login_name: loginName, password: password })
             .then(response => {
@@ -98,7 +98,6 @@ class LoginRegister extends React.Component {
                     showRegistrationError: false,
                     showRequiredFieldsWarning: false,
                 });
-                // Assuming you handle user redirection or state update upon successful registration
                 window.location.href = `#/users/${rUser._id}`;
             } else {
                 console.error('Unexpected response format:', response);
