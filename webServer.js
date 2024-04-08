@@ -189,27 +189,27 @@ app.post("/user", function (request, response) {
   const password_repeat = request.body.password_repeat || "";
 
   if (first_name === "") {
-    console.error("Error in /user", first_name);
+    console.error("Error in /user fn", first_name);
     response.status(400).send("first_name is required");
     return;
   }
   if (last_name === "") {
-    console.error("Error in /user", last_name);
+    console.error("Error in /user ln", last_name);
     response.status(400).send("last_name is required");
     return;
   }
   if (register_login_name === ""){
-    console.error("Error in /user", register_login_name);
+    console.error("Error in /user un", register_login_name);
     response.status(400).send("Reg Login_name is required");
     return;
   }
   if (register_password === ""){
-    console.error("Error in /user", register_password);
+    console.error("Error in /user p", register_password);
     response.status(400).send("Reg password is required");
     return;
   }
   if (password_repeat === ""){
-    console.error("Error in /user", password_repeat);
+    console.error("Error in /user pr", password_repeat);
     response.status(400).send("Verify password is required");
     return;
   }
