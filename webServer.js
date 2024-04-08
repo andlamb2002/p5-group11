@@ -76,23 +76,46 @@ mongoose.connect("mongodb://127.0.0.1/project6", {
 // (http://expressjs.com/en/starter/static-files.html) do all the work for us.
 app.use(express.static(__dirname));
 
-app.post('/admin/login', function (request, response) {
-  const login_name = request.body.login_name;
+// app.post('/admin/login', function (request, response) {
+//   const login_name = request.body.login_name;
 
-  User.findOne({login_name: login_name}, function(err, user) {
+//   User.findOne({login_name: login_name}, function(err, user) {
+//       if (err) {
+//           console.error('Error during user login:', err);
+//           response.status(500).send(JSON.stringify(err));
+//           return;
+//       }
+//       if (!user) {
+//           response.status(400).send('Login failed');
+//           return;
+//       }
+//       request.session.user = { _id: user._id, login_name: user.login_name };
+//       response.send(user); 
+//   });
+// });
+
+app.post('/admin/login', function (request, response) {
+  const { login_name, password } = request.body;
+
+  User.findOne({ login_name: login_name, password: password }, function(err, user) {
       if (err) {
           console.error('Error during user login:', err);
           response.status(500).send(JSON.stringify(err));
           return;
       }
       if (!user) {
-          response.status(400).send('Login failed');
+          // Using a generic error message is a good practice for security to
+          // prevent enumeration of valid usernames/passwords
+          response.status(400).send('Login failed. Please check your login details.');
           return;
       }
+      // User found and password matches, proceed with login
       request.session.user = { _id: user._id, login_name: user.login_name };
       response.send(user); 
   });
 });
+
+
 app.post('/commentsOfPhoto/:photo_id', function (request, response) {
   if (!request.session.user) {
     response.status(401).send('Unauthorized');

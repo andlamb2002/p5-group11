@@ -20,19 +20,20 @@ class LoginRegister extends React.Component {
                 location: undefined,
                 description: undefined,
                 occupation: undefined,
-                login_name: undefined,
-                password: undefined,
                 register_login_name: undefined,
                 register_password: undefined,
                 password_repeat: undefined,
             },
             loginName: '',
+            password: '', // Added password state for login
             message: null
         };
 
         this.handleRegister = this.handleRegister.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleShowRegistration = this.handleShowRegistration.bind(this);
+        this.handleLoginNameChange = this.handleLoginNameChange.bind(this);
+        this.handlePasswordChange = this.handlePasswordChange.bind(this); // Binding the new method
     }
 
     handleShowRegistration = () => {
@@ -46,10 +47,15 @@ class LoginRegister extends React.Component {
         this.setState({ loginName: event.target.value });
     };
 
+    handlePasswordChange = (event) => {
+        this.setState({ password: event.target.value });
+    };
+
     handleLogin = (event) => {
         event.preventDefault();
+        const { loginName, password } = this.state; // Destructure for easier access
 
-        axios.post('/admin/login', { login_name: this.state.loginName })
+        axios.post('/admin/login', { login_name: loginName, password: password })
             .then(response => {
                 this.props.setUserLoggedIn(true);
                 this.props.setTopName(`Hi ${response.data.first_name}`);
@@ -69,129 +75,90 @@ class LoginRegister extends React.Component {
             return;
         }
 
+        const { user } = this.state;
         const currentState = {
-            first_name: this.state.user.first_name,
-            last_name: this.state.user.last_name,
-            location: this.state.user.location,
-            description: this.state.user.description,
-            occupation: this.state.user.occupation,
-            register_login_name: this.state.user.register_login_name,
-            register_password: this.state.user.register_password,
-            password_repeat: this.state.user.password_repeat,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            location: user.location,
+            description: user.description,
+            occupation: user.occupation,
+            register_login_name: user.register_login_name,
+            register_password: user.register_password,
+            password_repeat: user.password_repeat,
         };
 
-        axios.post(
-            "/user/",
-            currentState,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-            .then((response) => {
-                if (response && response.data) { // Ensure response and response.data are not undefined
-                    const user = response.data;
-                    this.setState({
-                        showRegistrationSuccess: true,
-                        showRegistrationError: false,
-                        showRequiredFieldsWarning: false,
-                    });
-                    
-                    // this.props.changeUser(user);
-                    window.location.href = `#/users/${user._id}`;
-                } else {
-                    // Handle unexpected response format
-                    console.error('Unexpected response format:', response);
-                }
-            })
-            .catch(error => {
+        axios.post("/user/", currentState, {
+            headers: { 'Content-Type': 'application/json' },
+        })
+        .then(response => {
+            if (response && response.data) {
+                const user = response.data;
                 this.setState({
-                    showRegistrationError: true,
-                    showRegistrationSuccess: false,
+                    showRegistrationSuccess: true,
+                    showRegistrationError: false,
                     showRequiredFieldsWarning: false,
                 });
-                if (error.response && error.response.data) {
-                    // You can access error.response.data here if it exists
-                    console.log(error.response.data);
-                } else {
-                    // Handle cases where error.response.data does not exist
-                    console.error('Error during registration:', error);
-                }
+                // Assuming you handle user redirection or state update upon successful registration
+                window.location.href = `#/users/${user._id}`;
+            } else {
+                console.error('Unexpected response format:', response);
+            }
+        })
+        .catch(error => {
+            this.setState({
+                showRegistrationError: true,
+                showRegistrationSuccess: false,
+                showRequiredFieldsWarning: false,
+            });
+            console.error('Error during registration:', error);
         });
     };
 
-    handleChange(event){
+    handleChange(event) {
         const {id, value} = event.target;
         this.setState((prevState) => ({
-            user:{
+            user: {
                 ...prevState.user,
                 [id]: value
             }
-        })
-        );
-    }
-    componentDidMount() {
-        //this.handleAppInfoChange();
+        }));
     }
 
     render() {
-        return this.state.user ? (
+        return (
             <div className="login-register-container">
                 <div className='wrapper'>
-       
-                    <form action=''>
-        
-                    <h1>Login</h1>
-        
-                    <div className='input-box'>
-                        <input type='text'
-                            value={this.state.loginName}
-                            onChange={this.handleLoginNameChange}
-                            placeholder='Username' 
-                            required
-                        />
-                        <FaRegUser className='icon'/>
-                    </div>
-        
-                    <div className='input-box'>
-                        <input type='password' placeholder='Password' required/>
-                        <FaUnlockAlt className='icon'/>
-        
-                    </div>
-        
-                    <div className='message-div'>
-                            {this.state.message && <p className='message'>{this.state.message}</p>}
-                    </div>
-        
-                    <button 
-                            type='submit'
-                            onClick={this.handleLogin}
-                    >
-                        Login
-                    </button>
-        
+                    <form>
+                        <h1>Login</h1>
+                        <div className='input-box'>
+                            <input type='text'
+                                value={this.state.loginName}
+                                onChange={this.handleLoginNameChange}
+                                placeholder='Username' 
+                                required
+                            />
+                            <FaRegUser className='icon'/>
+                        </div>
+                        <div className='input-box'>
+                            <input type='password'
+                                value={this.state.password}
+                                onChange={this.handlePasswordChange}
+                                placeholder='Password' 
+                                required
+                            />
+                            <FaUnlockAlt className='icon'/>
+                        </div>
+                        <div className='message-div'>
+                                {this.state.message && <p className='message'>{this.state.message}</p>}
+                        </div>
+                        <Button 
+                                type='button'
+                                onClick={this.handleLogin}
+                        >
+                            Login
+                        </Button>
                     </form>
-       
                 </div> 
-                {/* <div className="login-box">
-                    <Typography>Login</Typography>
-                    <Box component="form" autoComplete="off">
-                        {this.state.showLoginError && <Alert severity="error">Login Failed</Alert>}
-                        <div>
-                            <TextField id="login_name" label="Login Name" variant="outlined" fullWidth
-                                       margin="normal" required={true} onChange={this.handleChange}/>
-                        </div>
-                        <div>
-                            <TextField id="password" label="Password" variant="outlined" fullWidth
-                                       margin="normal" type="password" required={true} onChange={this.handleChange}/>
-                        </div>
-                        <Box mb={2}>
-                            <Button type="submit" variant="contained" onClick={this.handleLogin}>
-                                Login
-                            </Button>
-                        </Box>
-                    </Box>
-                </div> */}
                 <div className="register-box">
                     <Typography>User Registration</Typography>
                     <Box component="form" autoComplete="off">
@@ -240,98 +207,8 @@ class LoginRegister extends React.Component {
                     </Box>
                 </div>
             </div>
-        ) : (
-            <div/>
         );
     }
 }
 
 export default LoginRegister;
-
-
-
-
-
-
-
-
-
-
-
-
-// class LoginRegister extends React.Component {
-//     constructor(props) {
-//         super(props);
-//         this.state = {
-//             loginName: '',
-//             message: null
-//         };
-//     }
-
-//     handleLoginNameChange = (event) => {
-//         this.setState({ loginName: event.target.value });
-//     };
-
-//     handleLogin = (event) => {
-//         event.preventDefault();
-
-//         axios.post('/admin/login', { login_name: this.state.loginName })
-//             .then(response => {
-//                 this.props.setUserLoggedIn(true);
-//                 this.props.setTopName(`Hi ${response.data.first_name}`);
-//             })
-//             .catch(error => {
-//                 this.setState({ message: 'Login failed. Please try again.' });
-//                 console.error('Login error:', error);
-//             });
-//     };
-
-//     render() {
-//         return(
-//             <div className='wrapper'>
-       
-//                  <form action=''>
-       
-//                    <h1>Login</h1>
-       
-//                    <div className='input-box'>
-//                      <input type='text'
-//                         value={this.state.loginName}
-//                         onChange={this.handleLoginNameChange}
-//                         placeholder='Username' 
-//                         required
-//                     />
-//                      <FaRegUser className='icon'/>
-//                    </div>
-       
-//                    <div className='input-box'>
-//                      <input type='password' placeholder='Password' required/>
-//                      <FaUnlockAlt className='icon'/>
-       
-//                    </div>
-       
-//                    <div className='message-div'>
-//                         {this.state.message && <p className='message'>{this.state.message}</p>}
-//                    </div>
-       
-//                    <button 
-//                         type='submit'
-//                         onClick={this.handleLogin}
-//                    >
-//                     Login
-//                    </button>
-       
-//                    {/* <div className='register-link'>
-//                     <p>Don&apos;t have an account? <a href="#">Register</a></p>
-       
-       
-//                    </div> */}
-       
-//                  </form>
-       
-//             </div> 
-//          );
-//     }
-// }
-
-// export default LoginRegister;
