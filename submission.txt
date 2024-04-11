@@ -1,0 +1,23 @@
+Project 8 - Submission Form
+
+Story number and name: 5 - Deleting Comments, Photos, and Users
+Story points: 4
+Brief description to see the story in action:
+
+Story number and name: 6 - Photo Like Votes
+Story points: 4
+Brief description to see the story in action:
+
+Story number and name: 11 - Count Bubbles
+Story points: 4
+Brief description to see the story in action:
+
+Total Story Points: 12
+
+Marketing Video URL (ensure permissions are set to public viewing):
+
+Is it OK if we post your Marketing Video URL on the class discussion forum?
+[Yes/No]
+
+Any special instructions for grading (it should be easy for someone to run your
+app from a new machine):
