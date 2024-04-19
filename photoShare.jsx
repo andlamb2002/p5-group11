@@ -20,7 +20,8 @@ class PhotoShare extends React.Component {
     super(props);
     this.state = {
       topName: 'Please Login',
-      userIsLoggedIn: false
+      userIsLoggedIn: false,
+      loggedInUserId: null,
     };
   }
   
@@ -28,12 +29,12 @@ setTopName = (name) => {
   this.setState({ topName: name });
 };
 
-setUserLoggedIn = (isLoggedIn) => {
-  this.setState({ userIsLoggedIn: isLoggedIn });
+setUserLoggedIn = (isLoggedIn, userId) => {
+  this.setState({ userIsLoggedIn: isLoggedIn, loggedInUserId: userId });
 };
 
 render() {
-  const {userIsLoggedIn} = this.state;
+  const {userIsLoggedIn, loggedInUserId} = this.state;
   return (
     <BrowserRouter>
       <div>
@@ -59,8 +60,8 @@ render() {
                     userIsLoggedIn ? <UserDetail {...props} /> : <Redirect to="/login-register" />
                 )} />
                 <Route path="/photos/:userId" render={(props) => (
-                    userIsLoggedIn ? <UserPhotos {...props} setTopName={this.setTopName} /> : <Redirect to="/login-register" />
-                )} />
+                      userIsLoggedIn ? <UserPhotos {...props} loggedInUserId={loggedInUserId} setTopName={this.setTopName} /> : <Redirect to="/login-register" />
+                  )} />
                 <Route path="/login-register" render={() => (
                     userIsLoggedIn ? <Redirect to="/photo-share.html" /> : <LoginRegister setUserLoggedIn={this.setUserLoggedIn} setTopName={this.setTopName} />
                 )} />

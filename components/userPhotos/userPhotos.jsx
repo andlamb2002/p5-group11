@@ -133,17 +133,12 @@ class UserPhotos extends React.Component {
                           alt={`Photo of ${user.first_name} ${user.last_name}`}
                           style={{objectFit: 'cover', width: '50%', height: '50%'}}
                       />
-                      {photo.likes.includes(user._id) ? (
-                          <>
-                              <button onClick={() => this.handleLike(photo._id, 'unlike')}>Unlike</button>
-                              <Typography component="span" style={{ marginLeft: '10px' }}>{photo.likes.length} likes</Typography>
-                          </>
+                      {photo.likes.includes(this.props.loggedInUserId) ? (
+                        <button onClick={() => this.handleLike(photo._id, 'unlike')}>Unlike</button>
                       ) : (
-                          <>
-                              <button onClick={() => this.handleLike(photo._id, 'like')}>Like</button>
-                              <Typography component="span" style={{ marginLeft: '10px' }}>{photo.likes.length} likes</Typography>
-                          </>
+                        <button onClick={() => this.handleLike(photo._id, 'like')}>Like</button>
                       )}
+                      <div>{photo.likes.length}</div>
                       <CardContent>
                           <Typography variant="h6" gutterBottom>
                               Comments:
