@@ -14,7 +14,7 @@ class UserPhotos extends React.Component {
       userList: [],
       photos: [],
       user: null,
-      loading: true
+      loading: true,
     };
   }
 
@@ -90,90 +90,119 @@ class UserPhotos extends React.Component {
     }
   };
 
+  handleLike = async (photoId, action) => {
+    try {
+      const url = `/photos/${photoId}/${action}`; // action can be 'like' or 'unlike'
+      const response = await axios.post(url);
+      const updatedPhoto = response.data;
+  
+      // Update the photo in the state to reflect the like/unlike
+      this.setState(prevState => {
+        const updatedPhotos = prevState.photos.map(photo => {
+          if (photo._id === photoId) {
+            return updatedPhoto;
+          }
+          return photo;
+        });
+        return { photos: updatedPhotos };
+      });
+    } catch (error) {
+      console.error('Error updating like status:', error);
+    }
+  };
+
   render() {
     const { userList, photos, user, loading } = this.state;
 
     return (
-        <div>
+      <div>
           <Typography variant="h4">Photos</Typography>
-
           {loading ? (
               <Typography variant="body1">Loading photos...</Typography>
           ) : (
               photos.map(photo => (
                   <Card key={photo._id} style={{ marginBottom: '20px' }}>
-                    <Typography variant="body1">
-                      Name: {user.first_name} {user.last_name}<br />
-                      Uploaded: {this.formatDate(photo.date_time)}<br />
-                    </Typography>
-                    <CardMedia
-                        component="img"
-                        height="100%"
-                        image={`/images/${photo.file_name}`}
-                        alt={`Photo of ${user.first_name} ${user.last_name}`}
-                        style={{objectFit: 'cover', width: '50%', height: '50%'}}
-                    />
-                    <CardContent>
-                      <Typography variant="h6" gutterBottom>
-                        Comments:
+                      <Typography variant="body1">
+                          Name: {user.first_name} {user.last_name}<br />
+                          Uploaded: {this.formatDate(photo.date_time)}<br />
                       </Typography>
-                      {photo.comments && photo.comments.length > 0 ? (
-                          photo.comments.map((comment) => {
-                            const commentedUser = userList.find((cUser) => cUser._id === comment.user_id);
-                            return commentedUser ? (
-                                <div key={comment._id} style={{ marginBottom: '10px' }}>
-                                  <Typography variant="subtitle2" style={{ fontWeight: 'bold' }}>
-                                    {commentedUser.first_name} {commentedUser.last_name}
-                                  </Typography>
-                                  <Typography variant="body2" style={{ color: 'text.secondary' }}>
-                                    ({this.formatDate(comment.date_time)}):
-                                  </Typography>
-                                  <Typography variant="body1" style={{ marginTop: '4px' }}>
-                                    {comment.comment}
-                                  </Typography>
-                                </div>
-                            ) : null;
-                          })
+                      <CardMedia
+                          component="img"
+                          height="100%"
+                          image={`/images/${photo.file_name}`}
+                          alt={`Photo of ${user.first_name} ${user.last_name}`}
+                          style={{objectFit: 'cover', width: '50%', height: '50%'}}
+                      />
+                      {photo.likes.includes(user._id) ? (
+                          <>
+                              <button onClick={() => this.handleLike(photo._id, 'unlike')}>Unlike</button>
+                              <Typography component="span" style={{ marginLeft: '10px' }}>{photo.likes.length} likes</Typography>
+                          </>
                       ) : (
-                          <Typography variant="body1">No comments for this photo.</Typography>
+                          <>
+                              <button onClick={() => this.handleLike(photo._id, 'like')}>Like</button>
+                              <Typography component="span" style={{ marginLeft: '10px' }}>{photo.likes.length} likes</Typography>
+                          </>
                       )}
-                      <div style={{ marginTop: '20px', borderTop: '1px solid #e0e0e0', paddingTop: '16px' }}>
-                        <form onSubmit={(event) => this.handleAddComment(event, photo._id)}>
-                          <input
-                              type="text"
-                              placeholder="Add a comment..."
-                              name="commentText"
-                              style={{
-                                width: '100%',
-                                padding: '8px',
-                                marginBottom: '8px',
-                                borderRadius: '4px',
-                                border: '1px solid #e0e0e0',
-                              }}
-                          />
-                          <button
-                              type="submit"
-                              style={{
-                                padding: '10px 20px',
-                                border: 'none',
-                                borderRadius: '4px',
-                                backgroundColor: '#3f51b5',
-                                color: 'white',
-                                cursor: 'pointer',
-                              }}
-                          >
-                            Submit
-                          </button>
-                        </form>
-                      </div>
-                    </CardContent>
-
-
+                      <CardContent>
+                          <Typography variant="h6" gutterBottom>
+                              Comments:
+                          </Typography>
+                          {photo.comments && photo.comments.length > 0 ? (
+                              photo.comments.map((comment) => {
+                                  const commentedUser = userList.find((cUser) => cUser._id === comment.user_id);
+                                  return commentedUser ? (
+                                      <div key={comment._id} style={{ marginBottom: '10px' }}>
+                                          <Typography variant="subtitle2" style={{ fontWeight: 'bold' }}>
+                                              {commentedUser.first_name} {commentedUser.last_name}
+                                          </Typography>
+                                          <Typography variant="body2" style={{ color: 'text.secondary' }}>
+                                              ({this.formatDate(comment.date_time)}):
+                                          </Typography>
+                                          <Typography variant="body1" style={{ marginTop: '4px' }}>
+                                              {comment.comment}
+                                          </Typography>
+                                      </div>
+                                  ) : null;
+                              })
+                          ) : (
+                              <Typography variant="body1">No comments for this photo.</Typography>
+                          )}
+                          <div style={{ marginTop: '20px', borderTop: '1px solid #e0e0e0', paddingTop: '16px' }}>
+                              <form onSubmit={(event) => this.handleAddComment(event, photo._id)}>
+                                  <input
+                                      type="text"
+                                      placeholder="Add a comment..."
+                                      name="commentText"
+                                      style={{
+                                          width: '100%',
+                                          padding: '8px',
+                                          marginBottom: '8px',
+                                          borderRadius: '4px',
+                                          border: '1px solid #e0e0e0',
+                                      }}
+                                  />
+                                  <button
+                                      type="submit"
+                                      style={{
+                                          padding: '10px 20px',
+                                          border: 'none',
+                                          borderRadius: '4px',
+                                          backgroundColor: '#3f51b5',
+                                          color: 'white',
+                                          cursor: 'pointer',
+                                      }}
+                                  >
+                                      Submit
+                                  </button>
+                              </form>
+                          </div>
+                      </CardContent>
                   </Card>
               ))
           )}
-        </div>
-    );
+      </div>
+  );
   }
 }
 

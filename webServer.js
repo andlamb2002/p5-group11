@@ -246,6 +246,70 @@ app.post("/user", function (request, response) {
   });
 });
 
+app.post('/photos/:id/like', function(request, response) {
+  if (!request.session.user) {
+      response.status(401).send('Unauthorized - Please log in.');
+      return;
+  }
+
+  const photoId = request.params.id;
+  const userId = request.session.user._id;
+
+  Photo.findById(photoId, function(err, photo) {
+      if (err || !photo) {
+          response.status(404).send('Photo not found');
+          return;
+      }
+
+      if (photo.likes.includes(userId)) {
+          response.status(400).send('You have already liked this photo');
+          return;
+      }
+
+      photo.likes.push(userId);
+      photo.save(function(saveErr, updatedPhoto) {
+          if (saveErr) {
+              response.status(500).send('Error liking photo');
+              return;
+          }
+          response.json(updatedPhoto);
+      });
+  });
+});
+
+app.post('/photos/:id/unlike', function(request, response) {
+  if (!request.session.user) {
+      response.status(401).send('Unauthorized - Please log in.');
+      return;
+  }
+
+  const photoId = request.params.id;
+  const userId = request.session.user._id;
+
+  Photo.findById(photoId, function(err, photo) {
+      if (err || !photo) {
+          response.status(404).send('Photo not found');
+          return;
+      }
+
+      // Check if user has already liked the photo
+      if (!photo.likes.includes(userId)) {
+          response.status(400).send('You have not liked this photo');
+          return;
+      }
+
+      // Remove user's ID from the likes array
+      photo.likes = photo.likes.filter(id => !id.equals(userId));
+      photo.save(function(saveErr, updatedPhoto) {
+          if (saveErr) {
+              response.status(500).send('Error unliking photo');
+              return;
+          }
+          response.json(updatedPhoto);
+      });
+  });
+});
+
 /**
  * Use express to handle argument passing in the URL. This .get will cause
  * express to accept URLs with /test/<something> and return the something in
@@ -377,7 +441,7 @@ app.get("/photosOfUser/:id", function (request, response) {
   }
 
   Photo.find({ user_id: request.params.id })
-    .select('_id file_name date_time user_id comments') 
+    .select('_id file_name date_time user_id likes comments') 
     .exec((err, photos) => {
       if (err) {
         console.error("Error in /photosOfUser/:id:", err);
