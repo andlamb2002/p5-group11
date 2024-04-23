@@ -4,7 +4,11 @@ import {
   Card,
   CardContent,
   CardMedia,
+  IconButton,
+  Box,
 } from '@mui/material';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import axios from 'axios';
 
 class UserPhotos extends React.Component {
@@ -92,11 +96,10 @@ class UserPhotos extends React.Component {
 
   handleLike = async (photoId, action) => {
     try {
-      const url = `/photos/${photoId}/${action}`; // action can be 'like' or 'unlike'
+      const url = `/photos/${photoId}/${action}`; 
       const response = await axios.post(url);
       const updatedPhoto = response.data;
   
-      // Update the photo in the state to reflect the like/unlike
       this.setState(prevState => {
         const updatedPhotos = prevState.photos.map(photo => {
           if (photo._id === photoId) {
@@ -133,12 +136,16 @@ class UserPhotos extends React.Component {
                           alt={`Photo of ${user.first_name} ${user.last_name}`}
                           style={{objectFit: 'cover', width: '50%', height: '50%'}}
                       />
-                      {photo.likes.includes(this.props.loggedInUserId) ? (
-                        <button onClick={() => this.handleLike(photo._id, 'unlike')}>Unlike</button>
-                      ) : (
-                        <button onClick={() => this.handleLike(photo._id, 'like')}>Like</button>
-                      )}
-                      <div>{photo.likes.length}</div>
+                      <Box display="flex" alignItems="center">
+                        <IconButton onClick={() => this.handleLike(photo._id, photo.likes.includes(this.props.loggedInUserId) ? 'unlike' : 'like')} style={{ marginRight: 8 }}>
+                          {photo.likes.includes(this.props.loggedInUserId) ? (
+                            <FavoriteIcon style={{ color: 'red' }} className="heart-icon"/>
+                          ) : (
+                            <FavoriteBorderIcon className="heart-icon"/>
+                          )}
+                        </IconButton>
+                        <Typography variant="subtitle1" component="span">{photo.likes.length}</Typography>
+                      </Box>
                       <CardContent>
                           <Typography variant="h6" gutterBottom>
                               Comments:
