@@ -4,7 +4,10 @@ import {
   Card,
   CardContent,
   CardMedia,
+  IconButton,
+
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 
 class UserPhotos extends React.Component {
@@ -89,7 +92,18 @@ class UserPhotos extends React.Component {
       console.error("Error adding comment:", error);
     }
   };
-
+  deletePhoto = async (photoId) => {
+    try {
+      const response = await axios.delete(`/photos/${photoId}`);
+      if (response.status === 200) {
+        this.setState(prevState => ({
+          photos: prevState.photos.filter(photo => photo._id !== photoId),
+        }));
+      }
+    } catch (error) {
+      console.error('Error deleting photo:', error);
+    }
+  };
   render() {
     const { userList, photos, user, loading } = this.state;
 
@@ -114,6 +128,13 @@ class UserPhotos extends React.Component {
                         style={{objectFit: 'cover', width: '50%', height: '50%'}}
                     />
                     <CardContent>
+                      <IconButton
+                          onClick={() => this.deletePhoto(photo._id)}
+                          style={{ float: 'right' }}
+                          aria-label="Delete photo"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
                       <Typography variant="h6" gutterBottom>
                         Comments:
                       </Typography>
