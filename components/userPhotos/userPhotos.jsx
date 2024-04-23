@@ -16,9 +16,11 @@ class UserPhotos extends React.Component {
       user: null,
       loading: true
     };
+    console.log('UserPhotos constructor');
   }
 
   componentDidMount() {
+    console.log('UserPhotos componentDidMount');
     this.fetchUserPhotos();
   }
 
@@ -40,6 +42,8 @@ class UserPhotos extends React.Component {
   }
 
   async fetchUserPhotos() {
+    console.log('UserPhotos fetchUserPhotos');
+    
     const userId = this.props.match.params.userId;
     const userListUrl = '/user/list';
     const userUrl = `/user/${userId}`;
@@ -51,6 +55,7 @@ class UserPhotos extends React.Component {
         axios.get(userUrl),
         axios.get(photosUrl)
       ]);
+      console.log('userListResponse, userResponse, photosResponse',userListResponse, userResponse, photosResponse)
 
       this.setState({
         userList: userListResponse.data,
@@ -92,6 +97,7 @@ class UserPhotos extends React.Component {
 
   render() {
     const { userList, photos, user, loading } = this.state;
+    console.log('user photos render',photos);
 
     return (
         <div>
@@ -103,7 +109,7 @@ class UserPhotos extends React.Component {
               photos.map(photo => (
                   <Card key={photo._id} style={{ marginBottom: '20px' }}>
                     <Typography variant="body1">
-                      Name: {user.first_name} {user.last_name}<br />
+                      hey hey Name: {user.first_name} {user.last_name}<br />
                       Uploaded: {this.formatDate(photo.date_time)}<br />
                     </Typography>
                     <CardMedia

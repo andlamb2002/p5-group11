@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, AppBar, Toolbar, Typography} from '@mui/material';
 import './TopBar.css';
 import axios from 'axios';
+import { withRouter } from 'react-router-dom/cjs/react-router-dom.min';
 
 /**
  * Define TopBar, a React componment of project #5
@@ -11,6 +12,7 @@ class TopBar extends React.Component {
     super(props);
     this.state={
       app_info: null,
+      id: null
     };
     this.fileInputRef = React.createRef(); 
   }
@@ -51,8 +53,10 @@ class TopBar extends React.Component {
   };
 
   // eslint-disable-next-line class-methods-use-this
-  handleFileChange = (event) => {
+  handleFileChange = (event, userId) => {
+    console.log('id', this.state, userId);
     const file = event.target.files[0];
+    file.userId = userId;
     if (!file) {
       console.error("No file selected.");
       return;
@@ -60,7 +64,7 @@ class TopBar extends React.Component {
   
     const formData = new FormData();
     formData.append("uploadedphoto", file);
-  
+    formData.append("userId", userId);
     axios.post("/photos/new", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -82,7 +86,8 @@ class TopBar extends React.Component {
       alignItems: 'center',
       width: '90%',
     };
-
+    console.log('props', this.props.location.pathname.split('/')[2]);
+    const userId = this.props.location.pathname.split('/')[2];
     const { userIsLoggedIn } = this.props;
 
     return (
@@ -111,7 +116,8 @@ class TopBar extends React.Component {
                 type="file"
                 accept="image/*"
                 ref={this.fileInputRef}
-                onChange={this.handleFileChange}
+                //onChange={this.handleFileChange}
+                onChange={(e) =>this.handleFileChange(e,userId)}
                 style={{ display: "none" }}
               />
               <Button onClick={this.handleAddPhoto} variant="contained" style={{ backgroundColor: "#ccb4a4", marginRight: 10 }}>
@@ -133,4 +139,4 @@ class TopBar extends React.Component {
   }
 }
 
-export default TopBar;
+export default withRouter(TopBar);

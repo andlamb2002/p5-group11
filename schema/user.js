@@ -12,7 +12,10 @@ const userSchema = new mongoose.Schema({
   description: { type: String, default: "Photography enthusiast" },
   occupation: { type: String, default: "Software Engineer" },
   login_name: { type: String, required: true }, 
-  password: { type: String, required: true } 
+  password: { type: String, required: true } ,
+  photosCount: {type: Number, required: true } ,
+  commentsCount: { type: Number, required: true },
+  commentedPhotos: { type: Array, required: true }
 });
 
 /**

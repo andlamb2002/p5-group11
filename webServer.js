@@ -167,8 +167,10 @@ app.post('/photos/new', processFormBody.single('uploadedphoto'), function (reque
   const newPhoto = new Photo({
     file_name: request.file.filename,
     date_time: new Date(),
-    user_id: request.session.user._id
+    //user_id: request.session.user._id
+    user_id: request.file.user._id
   });
+  console.log('newPhoto',newPhoto,request.user_id);
   newPhoto.save()
     .then(() => response.send('Photo uploaded successfully.'))
     .catch(err => response.status(500).send(err));
@@ -339,7 +341,33 @@ app.get("/user/list", function (request, response) {
       response.status(500).send(JSON.stringify(err));
       return; 
     }
-    response.json(users);
+
+    async.each(
+      users,
+      async function(user){
+        const userCommentedPhotos = await Photo.aggregate([
+          { $unwind: "$comments" },
+          { $match: { 'comments.user_id': user._id } }
+      ]);
+        console.log('userCommentedPhotos',user._id,JSON.stringify(userCommentedPhotos));
+
+        //Photos Count Bubble
+        const photosCount = await Photo.countDocuments({ user_id: user._id });
+        user.photosCount = photosCount;
+        user.commentsCount = userCommentedPhotos.length;
+        user.commentedPhotos = userCommentedPhotos;
+      },
+
+      function(err){
+        if(err){
+          console.error("Error fetching photos count:", err);
+          response.status(500).send(JSON.stringify(err));
+        } else {
+          response.json(users);
+        }
+      }
+    );
+    /* response.json(users); */
   });
 });
 
@@ -353,6 +381,23 @@ app.get("/user/:id", function (request, response) {
   }
 
   User.findById(request.params.id, '_id first_name last_name location description occupation', (err, user) => {
+    if (err || !user) {
+      console.log("User with _id:" + request.params.id + " not found.");
+      response.status(400).send("User not found");
+      return;
+    }
+    response.json(user);
+  });
+});
+
+app.get("/photos/:id", function (request, response) {
+  if (!request.session.user) {
+    response.status(401).send('Unauthorized - Please log in.');
+    return;
+  }
+
+  Photo.find(request.params.id, '_id first_name last_name location description occupation', (err, user) => {
+    console.log('user',user, err);
     if (err || !user) {
       console.log("User with _id:" + request.params.id + " not found.");
       response.status(400).send("User not found");
