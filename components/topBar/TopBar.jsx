@@ -104,9 +104,7 @@ class TopBar extends React.Component {
 
 
           {this.state.app_info && (
-            <Typography variant="h5" component="div" color="inherit">
-              Version: {this.state.app_info.__v}
-            </Typography>
+            <Typography variant="h5" component="div" sx={{ flexGrow: 0 }} color="inherit">Version: {this.state.app_info.version}</Typography>
           )}
 
           <Typography>
