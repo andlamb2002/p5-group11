@@ -111,6 +111,7 @@ class UserPhotos extends React.Component {
       });
     } catch (error) {
       console.error('Error updating like status:', error);
+      console.error('Detailed error:', error.response.data);  // Log detailed error information
     }
   };
 
@@ -137,6 +138,8 @@ class UserPhotos extends React.Component {
                           style={{objectFit: 'cover', width: '50%', height: '50%'}}
                       />
                       <Box display="flex" alignItems="center">
+                        {console.log(this.props.loggedInUserId)}
+                        {console.log(photo.likes.includes(this.props.loggedInUserId))}
                         <IconButton onClick={() => this.handleLike(photo._id, photo.likes.includes(this.props.loggedInUserId) ? 'unlike' : 'like')} style={{ marginRight: 8 }}>
                           {photo.likes.includes(this.props.loggedInUserId) ? (
                             <FavoriteIcon style={{ color: 'red' }} className="heart-icon"/>
