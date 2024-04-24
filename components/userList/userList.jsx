@@ -23,14 +23,7 @@ Backdrop.propTypes = {
   className: PropTypes.string.isRequired,
 };
 
-const blue = {
-  200: '#99CCFF',
-  300: '#66B2FF',
-  400: '#3399FF',
-  500: '#007FFF',
-  600: '#0072E5',
-  700: '#0066CC',
-};
+
 
 const grey = {
   50: '#F3F6F9',
@@ -150,7 +143,7 @@ class UserList extends React.Component {
                      </Button>
 
                      <IconButton className="greenphotos" 
-                     style={{backgroundColor: 'green', color: 'white', borderRadius: '100%', width: '40px', height: '40px'}}
+                     style={{backgroundColor: 'green', color: 'white', borderRadius: '100%', width: '40px', height: '40px', position: 'absolute', right: '50px', top: '0'}}
                       
                       >
                         {user.photosCount}
@@ -158,7 +151,7 @@ class UserList extends React.Component {
                       
 
                      <IconButton className="comments-btn" 
-                     style={{backgroundColor: 'red', color: 'white', borderRadius: '100%', width: '40px', height: '40px'}}
+                     style={{backgroundColor: 'red', color: 'white', borderRadius: '100%', width: '40px', height: '40px', position: 'absolute', right: '0', top: '0'}}
                      onClick={() => {
                       this.handleCommentsClick(user); 
                   }}

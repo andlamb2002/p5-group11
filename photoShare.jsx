@@ -42,14 +42,14 @@ render() {
             <TopBar topName={this.state.topName} setTopName={this.setTopName} setUserLoggedIn={this.setUserLoggedIn} userIsLoggedIn={this.state.userIsLoggedIn}/>
           </Grid>
           <div className="main-topbar-buffer" />
-          <Grid item sm={2}>
+          <Grid item sm={3}>
             <Paper className="main-grid-item">
               {userIsLoggedIn && (
                 <UserList setTopName={this.setTopName} />
               )}
             </Paper>
           </Grid>
-          <Grid item sm={10}>
+          <Grid item sm={9}>
 
               <Switch>
                 <Route exact path="/photo-share.html" render={() => (

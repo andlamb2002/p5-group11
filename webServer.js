@@ -77,6 +77,10 @@ mongoose.connect("mongodb://127.0.0.1/project6", {
 
 app.use(express.static(__dirname));
 
+
+/**
+ * URL /admin/login - Returns user object on successful login
+ */
 app.post('/admin/login', function (request, response) {
   const { login_name, password } = request.body;
 
@@ -95,7 +99,9 @@ app.post('/admin/login', function (request, response) {
   });
 });
 
-
+/**
+ * URL /commentsOfPhoto/:photo_id - adds a new comment on photo for the current user
+ */
 app.post('/commentsOfPhoto/:photo_id', function (request, response) {
   if (!request.session.user) {
     response.status(401).send('Unauthorized');
@@ -136,6 +142,10 @@ app.post('/commentsOfPhoto/:photo_id', function (request, response) {
   });
 });
 
+
+/**
+ * URL /admin/logout - clears user session
+ */
 app.post('/admin/logout', function (request, response) {
   if (request.session.user) {
     request.session.destroy(function(err) {
@@ -159,6 +169,10 @@ app.get('/check-login', function (request, response) {
   }
 });
 
+
+/**
+ * URL /photos/new - adds a new photo for the current user
+ */
 app.post('/photos/new', processFormBody.single('uploadedphoto'), function (request, response) {
   if (!request.file) {
     response.status(400).send('No file uploaded.');

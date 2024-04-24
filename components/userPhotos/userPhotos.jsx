@@ -14,7 +14,8 @@ class UserPhotos extends React.Component {
       userList: [],
       photos: [],
       user: null,
-      loading: true
+      loading: true,
+      favorite_ids: [],
     };
     console.log('UserPhotos constructor');
   }
@@ -66,6 +67,21 @@ class UserPhotos extends React.Component {
     } catch (error) {
       console.error('Error fetching user photos:', error);
     }
+
+    axios
+      .get(`/getFavorites`)
+        .then((response) => {
+          console.log("Received Favorites:", response.data);
+
+          let favorite_ids = response.data.map((photo) => photo._id);
+          this.setState({ favorite_ids });
+          })
+          .catch((err) => {
+          console.error("Error fetching favorites:", err.response || err.message);
+          // Handle error and update state accordingly
+          this.setState({ loading: false });
+        });
+
   }
   handleAddComment = async (event, photoId) => {
     event.preventDefault();
@@ -109,7 +125,7 @@ class UserPhotos extends React.Component {
               photos.map(photo => (
                   <Card key={photo._id} style={{ marginBottom: '20px' }}>
                     <Typography variant="body1">
-                      hey hey Name: {user.first_name} {user.last_name}<br />
+                      Name: {user.first_name} {user.last_name}<br />
                       Uploaded: {this.formatDate(photo.date_time)}<br />
                     </Typography>
                     <CardMedia
