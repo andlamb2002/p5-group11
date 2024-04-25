@@ -93,7 +93,18 @@ class UserPhotos extends React.Component {
       console.error("Error adding comment:", error);
     }
   };
-
+  deletePhoto = async (photoId) => {
+    try {
+      const response = await axios.delete(`/photos/${photoId}`);
+      if (response.status === 200) {
+        this.setState(prevState => ({
+          photos: prevState.photos.filter(photo => photo._id !== photoId),
+        }));
+      }
+    } catch (error) {
+      console.error('Error deleting photo:', error);
+    }
+  };
   handleLike = async (photoId, action) => {
     try {
       const url = `/photos/${photoId}/${action}`; 
@@ -148,7 +159,14 @@ class UserPhotos extends React.Component {
                         <Typography variant="subtitle1" component="span">{photo.likes.length}</Typography>
                       </Box>
                       <CardContent>
-                          <Typography variant="h6" gutterBottom>
+                          <IconButton
+                          onClick={() => this.deletePhoto(photo._id)}
+                          style={{ float: 'right' }}
+                          aria-label="Delete photo"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                      <Typography variant="h6" gutterBottom>
                               Comments:
                           </Typography>
                           {photo.comments && photo.comments.length > 0 ? (
