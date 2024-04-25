@@ -77,6 +77,28 @@ mongoose.connect("mongodb://127.0.0.1/project6", {
 
 app.use(express.static(__dirname));
 
+function getSessionUserID(request){
+  return request.session.user_id;
+  //return session.user._id;
+}
+
+function hasNoUserSession(request, response){
+  //return false;
+  if (!getSessionUserID(request)){
+    response.status(401).send();
+    return true;
+  }
+  // if (session.user === undefined){
+  //   response.status(401).send();
+  //   return true;
+  // }
+  return false;
+}
+
+
+app.get("/", function (request, response) {
+  response.send("Simple web server of files from " + __dirname);
+});
 
 /**
  * URL /admin/login - Returns user object on successful login
@@ -142,6 +164,28 @@ app.post('/commentsOfPhoto/:photo_id', function (request, response) {
   });
 });
 
+//request.body has photo_id
+app.post(`/addToFavorites`, function(request, response) {
+  if (!request.session.user) {
+    response.status(401).send("Unauthorized - Please Login");
+    return;
+  }
+  let curr_user_id = request.session.user_id;
+  let photo_id = request.body.photo_id;
+  User.findOne({ _id: curr_user_id }, function(err, user) {
+    if (err) {
+      response.status(400).send("invalid user id");
+      return;
+    }
+    if (!user.favorites.includes(photo_id)) {
+      //in case it was already favorited?
+      user.favorites.push(photo_id);
+      user.save();
+    }
+    response.status(200).send();
+  });
+});
+
 
 /**
  * URL /admin/logout - clears user session
@@ -174,6 +218,7 @@ app.get('/check-login', function (request, response) {
  * URL /photos/new - adds a new photo for the current user
  */
 app.post('/photos/new', processFormBody.single('uploadedphoto'), function (request, response) {
+  
   if (!request.file) {
     response.status(400).send('No file uploaded.');
     return;
@@ -181,8 +226,8 @@ app.post('/photos/new', processFormBody.single('uploadedphoto'), function (reque
   const newPhoto = new Photo({
     file_name: request.file.filename,
     date_time: new Date(),
-    //user_id: request.session.user._id
-    user_id: request.file.user._id
+    user_id: request.session.user._id
+    //user_id: request.file.user._id
   });
   console.log('newPhoto',newPhoto,request.user_id);
   newPhoto.save()
@@ -227,6 +272,10 @@ app.post("/user", function (request, response) {
   if (password_repeat === ""){
     console.error("Error in /user pr", password_repeat);
     response.status(400).send("Verify password is required");
+    return;
+  }
+  if (register_password !== password_repeat) {
+    response.status(400).send("Passwords do not match");
     return;
   }
 

@@ -88,7 +88,9 @@ const ModalContent = styled('div')(
   `,
 );
 
-
+/**
+ * Define UserList, a React component of project #5
+ */
 class UserList extends React.Component {
     constructor(props) {
         super(props);

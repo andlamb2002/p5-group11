@@ -3,7 +3,7 @@ import {
   Typography,
   Card,
   CardContent,
-  CardMedia,
+  CardMedia, Button
 } from '@mui/material';
 import axios from 'axios';
 
@@ -119,6 +119,10 @@ class UserPhotos extends React.Component {
         <div>
           <Typography variant="h4">Photos</Typography>
 
+          <Button variant="contained" component="a" href={"#/users/" + this.state.user_id}>
+                        User Detail
+          </Button>
+
           {loading ? (
               <Typography variant="body1">Loading photos...</Typography>
           ) : (
@@ -136,6 +140,7 @@ class UserPhotos extends React.Component {
                         style={{objectFit: 'cover', width: '50%', height: '50%'}}
                     />
                     <CardContent>
+                      favorited={this.state.favorite_ids.includes(photo._id)}
                       <Typography variant="h6" gutterBottom>
                         Comments:
                       </Typography>
