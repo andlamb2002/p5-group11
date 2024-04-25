@@ -23,6 +23,7 @@ class PhotoShare extends React.Component {
       userIsLoggedIn: false,
       loggedInUserId: null,
     };
+    this.userPhotosRef = React.createRef();
   }
   
 setTopName = (name) => {
@@ -40,7 +41,7 @@ render() {
       <div>
         <Grid container spacing={8}>
           <Grid item xs={12}>
-            <TopBar topName={this.state.topName} setTopName={this.setTopName} setUserLoggedIn={this.setUserLoggedIn} userIsLoggedIn={this.state.userIsLoggedIn}/>
+            <TopBar topName={this.state.topName} setTopName={this.setTopName} setUserLoggedIn={this.setUserLoggedIn} userIsLoggedIn={this.state.userIsLoggedIn} addNewPhoto={this.userPhotosRef.current ? this.userPhotosRef.current.addNewPhoto : null}/>
           </Grid>
           <div className="main-topbar-buffer" />
           <Grid item sm={2}>
@@ -60,7 +61,7 @@ render() {
                     userIsLoggedIn ? <UserDetail {...props} /> : <Redirect to="/login-register" />
                 )} />
                 <Route path="/photos/:userId" render={(props) => (
-                      userIsLoggedIn ? <UserPhotos {...props} loggedInUserId={loggedInUserId} setTopName={this.setTopName} /> : <Redirect to="/login-register" />
+                      userIsLoggedIn ? <UserPhotos {...props} loggedInUserId={loggedInUserId} setTopName={this.setTopName} ref={this.userPhotosRef}/> : <Redirect to="/login-register" />
                   )} />
                 <Route path="/login-register" render={() => (
                     userIsLoggedIn ? <Redirect to="/photo-share.html" /> : <LoginRegister setUserLoggedIn={this.setUserLoggedIn} setTopName={this.setTopName} />

@@ -65,8 +65,8 @@ class TopBar extends React.Component {
         "Content-Type": "multipart/form-data",
       },
     })
-    .then(() => { 
-      this.props.setTopName('Photo uploaded successfully.');
+    .then(response => {
+      this.props.addNewPhoto(response.data);  
     })
     .catch(error => {
       console.error("Error uploading photo:", error);

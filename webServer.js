@@ -191,13 +191,19 @@ app.post('/photos/new', processFormBody.single('uploadedphoto'), function (reque
     return;
   }
   const newPhoto = new Photo({
-    file_name: request.file.filename,
-    date_time: new Date(),
-    user_id: request.session.user._id
+    file_name: request.file.filename,  
+    date_time: new Date(),            
+    user_id: request.session.user._id 
   });
+
   newPhoto.save()
-    .then(() => response.send('Photo uploaded successfully.'))
-    .catch(err => response.status(500).send(err));
+    .then(savedPhoto => {
+      response.json(savedPhoto);  
+    })
+    .catch(err => {
+      console.error("Error saving photo:", err);
+      response.status(500).send(err);
+    });
 });
 
 app.get("/", function (request, response) {

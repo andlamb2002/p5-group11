@@ -60,7 +60,10 @@ class UserPhotos extends React.Component {
       this.setState({
         userList: userListResponse.data,
         user: userResponse.data,
-        photos: photosResponse.data,
+        photos: photosResponse.data.map(photo => ({
+          ...photo,
+          likes: photo.likes || [] 
+        })),
         loading: false
       });
     } catch (error) {
@@ -94,6 +97,11 @@ class UserPhotos extends React.Component {
       console.error("Error adding comment:", error);
     }
   };
+  addNewPhoto = (newPhoto) => {
+    this.setState(prevState => ({
+      photos: [...prevState.photos, newPhoto]
+    }));
+  };
   deletePhoto = async (photoId) => {
     try {
       const response = await axios.delete(`/photos/${photoId}`);
@@ -123,7 +131,7 @@ class UserPhotos extends React.Component {
       });
     } catch (error) {
       console.error('Error updating like status:', error);
-      console.error('Detailed error:', error.response.data);  // Log detailed error information
+      console.error('Detailed error:', error.response.data);  
     }
   };
 
@@ -150,14 +158,15 @@ class UserPhotos extends React.Component {
                           style={{objectFit: 'cover', width: '50%', height: '50%'}}
                       />
                       <Box display="flex" alignItems="center">
-                        <IconButton onClick={() => this.handleLike(photo._id, photo.likes.includes(this.props.loggedInUserId) ? 'unlike' : 'like')} style={{ marginRight: 8 }}>
-                          {photo.likes.includes(this.props.loggedInUserId) ? (
-                            <FavoriteIcon style={{ color: 'red' }} className="heart-icon"/>
-                          ) : (
-                            <FavoriteBorderIcon className="heart-icon"/>
-                          )}
-                        </IconButton>
-                        <Typography variant="subtitle1" component="span">{photo.likes.length}</Typography>
+                      <IconButton onClick={() => this.handleLike(photo._id, photo.likes?.includes(this.props.loggedInUserId) ? 'unlike' : 'like')} style={{ marginRight: 8 }}>
+                        {photo.likes?.includes(this.props.loggedInUserId) ? (
+                          <FavoriteIcon style={{ color: 'red' }} className="heart-icon"/>
+                        ) : (
+                          <FavoriteBorderIcon className="heart-icon"/>
+                        )}
+                      </IconButton>
+                      <Typography variant="subtitle1" component="span">{photo.likes?.length || 0}</Typography>
+
                       </Box>
                       <CardContent>
                           <IconButton
