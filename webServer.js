@@ -456,6 +456,10 @@ app.get("/photosOfUser/:id", function (request, response) {
     });
 });
 
+app.get(/^(?!.*\.js$).*$/, function(req, res) {
+  res.sendFile(path.join(__dirname, 'photo-share.html'));
+});
+
 const server = app.listen(3000, function () {
   const port = server.address().port;
   console.log(
