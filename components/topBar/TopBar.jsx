@@ -44,7 +44,6 @@ class TopBar extends React.Component {
   };
 
   handleAddPhoto = () => {
-    console.log('Add Photo button clicked');
     if (this.fileInputRef.current) {
       this.fileInputRef.current.click();
     }
@@ -68,7 +67,6 @@ class TopBar extends React.Component {
     })
     .then(() => { 
       this.props.setTopName('Photo uploaded successfully.');
-      console.log("Photo uploaded successfully.");
     })
     .catch(error => {
       console.error("Error uploading photo:", error);
