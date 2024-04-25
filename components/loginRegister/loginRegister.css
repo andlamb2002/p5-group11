@@ -16,7 +16,7 @@ box-sizing: border-box;
   /* background: #1976d2;  */
 
   width: 420px;
-  background: transparent;
+  background: rgb(160, 160, 249);
   border: 2px solid rgba(255, 255, 255, .2);
   box-shadow: 0 0 10px rgba(0, 0, 0, .2);
   backdrop-filter: blur(30px);
@@ -79,6 +79,7 @@ margin:-15px 0 15px;
 
 }
 
+
 .message-div label input {
 
   accent-color: #fff;
@@ -136,4 +137,27 @@ margin: 20px 0 15px;
 
   text-decoration: underline;
 
+}
+
+.register-box{
+  
+  font-family: "poppins, sans-serif";
+  /* justify-content: center; */
+  /* align-items: center; */
+  
+  width: 420px;
+  
+  background: rgb(149, 239, 149);
+  border: 2px solid rgba(255, 255, 255, .2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+  backdrop-filter: blur(30px);
+  color: #333;
+  border-radius: 10px;
+  padding: 30px 40px;
+
+}
+
+.login-register-container{
+  display:flex;
+  justify-content: space-around;
 }

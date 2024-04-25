@@ -3,6 +3,7 @@ import { Typography, Button, Paper, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import './userDetail.css';
 import axios from 'axios';
+import { MdDelete } from "react-icons/md";
 
 
 class UserDetail extends React.Component {
@@ -24,6 +25,17 @@ class UserDetail extends React.Component {
     if (prevProps.match.params.userId !== userId || !this.state.user) {
       this.fetchUserDetails();
     }
+  }
+
+   handleDelete(id){
+    const confirm = window.confirm ('would you like to delete?');
+     if (confirm) {
+      axios.delete('http://localhost:3000/users/'+id)
+      .then(res => {
+        // navigate('/');
+        window.location='/users'
+      }).catch(error => console.log(error));
+     }
   }
 
   fetchUserDetails() {
@@ -60,9 +72,6 @@ class UserDetail extends React.Component {
             </Typography>
             {user ? (
                 <Box className="user-content">
-                
-                    
-                    
                     <Box className="user-info-box">
                         <Typography variant="body1">
                             Id: {user._id}
@@ -79,16 +88,23 @@ class UserDetail extends React.Component {
                         <Typography variant="body1">
                             Description: {user.description}
                         </Typography>
-
                     </Box>
+                    
                     <Button
                       component={Link}
                       to={`/photos/${user._id}`}
                       variant="contained"
                       color="primary"> 
-                      User Photos
+                      User photos
                     </Button>
+
+                    <button onClick={e => this.handleDelete(user._id) } className='deletebtn'><MdDelete /></button>
+
                 </Box>
+
+        
+
+
             ) : (
                 <Typography variant="body1">
                     Loading user details...

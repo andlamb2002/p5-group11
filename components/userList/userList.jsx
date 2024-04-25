@@ -13,15 +13,19 @@ class UserList extends React.Component {
     }
 
     componentDidMount() {
-        const url = '/user/list';
+        this.getUsers()
+    }
+
+    getUsers(){
+      const url = '/user/list';
     
-        axios.get(url)
-            .then((response) => {
-                this.setState({ userList: response.data });
-            })
-            .catch((error) => {
-                console.error('Error fetching user List:', error);
-            });
+      axios.get(url)
+          .then((response) => {
+              this.setState({ userList: response.data });
+          })
+          .catch((error) => {
+              console.error('Error fetching user List:', error);
+          });
     }
 
     handleUserClick = (user) => {

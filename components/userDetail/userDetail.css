@@ -91,3 +91,29 @@
         margin-top: 20px;
     }
 }
+
+.deletebtn{ 
+        /* display: flex; */
+        align-items: center;
+        background:#ffffff;
+        border: 1px solid lighten(gray, 24%);
+        height: 20px;
+        padding: 0 16px 0 16px;
+        letter-spacing: .25px;
+        border-radius: 10px;
+        cursor: pointer;
+        color: red;
+        margin-left: 25px;
+        margin-bottom: 120px;
+        margin-top: 15px;
+
+    
+  
+}
+      
+
+
+
+
+
+

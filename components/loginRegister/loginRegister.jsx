@@ -123,6 +123,16 @@ class LoginRegister extends React.Component {
         }));
     }
 
+    // const [action, setAction] = useState('');
+
+    // const registerLink = () => {
+    //     setAction(' active');
+    // };
+
+    // const loginLink = () => {
+    //     setAction('');
+    // };
+
     render() {
         return (
             <div className="login-register-container">
@@ -156,10 +166,17 @@ class LoginRegister extends React.Component {
                         >
                             Login
                         </Button>
+                        {/* <div className="register-link">
+                            <p>Don't have a account? <a href="#" onClick={registerLink}>Register</a> </p>
+                        </div> */}
                     </form>
                 </div> 
+
+
+
                 <div className="register-box">
-                    <Typography>User Registration</Typography>
+                    
+                    <h1>User Registration</h1>
                     <Box component="form" autoComplete="off">
                         
                         
@@ -200,11 +217,25 @@ class LoginRegister extends React.Component {
                                 Register Me
                             </Button>
                         </div>
+{/* 
+                        <div className="register-link">
+                            <p>Already have a account? <a href="#" onClick={loginLink}></a> </p>
+                        </div> */}
+
                         {this.state.showRequiredFieldsWarning && <Alert severity = "warning">Please fill in all required fields.</Alert>}
                         {this.state.showRegistrationSuccess && <Alert severity="success">Registration Succeeded</Alert>}
                         {this.state.showRegistrationError && <Alert severity="error">Registration Failed</Alert>}
                     </Box>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
                 </div>
+                <br />
+                <br />
+                <br />
+                <br />
             </div>
         );
     }
