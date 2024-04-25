@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 
 class UserPhotos extends React.Component {
@@ -165,10 +166,10 @@ class UserPhotos extends React.Component {
                           aria-label="Delete photo"
                       >
                         <DeleteIcon />
-                      </IconButton>
+                          </IconButton>
                       <Typography variant="h6" gutterBottom>
                               Comments:
-                          </Typography>
+                      </Typography>
                           {photo.comments && photo.comments.length > 0 ? (
                               photo.comments.map((comment) => {
                                   const commentedUser = userList.find((cUser) => cUser._id === comment.user_id);
