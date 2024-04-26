@@ -56,7 +56,7 @@ class UserPhotos extends React.Component {
         axios.get(userUrl),
         axios.get(photosUrl)
       ]);
-      console.log('userListResponse, userResponse, photosResponse',userListResponse, userResponse, photosResponse)
+      console.log('userListResponse, userResponse, photosResponse',userListResponse, userResponse, photosResponse);
 
       this.setState({
         userList: userListResponse.data,

@@ -6,8 +6,9 @@ import {
   Card,
   CardMedia,
   CardHeader,
-  IconButton , Clear
+  IconButton
 } from "@mui/material";
+import { DeleteOutline } from "@mui/icons-material";
 import "./TinyFavorite.css";
 const axios = require("axios").default;
 
@@ -49,7 +50,7 @@ class TinyFavorite extends React.Component {
             id="card-tiny-fav-header"
             action={(
               <IconButton onClick={event => this.handleDeleteFavorite(event)}>
-                <Clear />
+                <DeleteOutline />
               </IconButton>
             )}
           />

@@ -19,6 +19,8 @@ const Backdrop = React.forwardRef((props, ref) => {
   );
 });
 
+Backdrop.displayName = 'Backdrop';
+
 Backdrop.propTypes = {
   className: PropTypes.string.isRequired,
 };

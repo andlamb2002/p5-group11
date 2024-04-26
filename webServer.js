@@ -76,7 +76,7 @@ mongoose.connect("mongodb://127.0.0.1/project6", {
 // (http://expressjs.com/en/starter/static-files.html) do all the work for us.
 
 app.use(express.static(__dirname));
-
+/*
 function getSessionUserID(request){
   return request.session.user_id;
   //return session.user._id;
@@ -94,6 +94,7 @@ function hasNoUserSession(request, response){
   // }
   return false;
 }
+*/
 
 
 app.get("/", function (request, response) {
@@ -421,10 +422,10 @@ app.get("/user/list", function (request, response) {
         user.commentedPhotos = userCommentedPhotos;
       },
 
-      function(err){
-        if(err){
-          console.error("Error fetching photos count:", err);
-          response.status(500).send(JSON.stringify(err));
+      function(errr){
+        if(errr){
+          console.error("Error fetching photos count:", errr);
+          response.status(500).send(JSON.stringify(errr));
         } else {
           response.json(users);
         }
