@@ -1,5 +1,5 @@
 import React from 'react';
-import { Divider, List, ListItem, Button, IconButton } from '@mui/material';
+import { Divider, List, ListItem, Button, IconButton, Avatar } from '@mui/material';
 import { Link } from 'react-router-dom';
 import './userList.css';
 import axios from 'axios';
@@ -99,7 +99,7 @@ class UserList extends React.Component {
         this.state = {
                 userList: [],
                 isCommentModalOpen: false,
-                selectedUserForComments: null
+                selectedUserForComments: null,
             };
     }
 
@@ -180,9 +180,20 @@ class UserList extends React.Component {
                           <h2 id="unstyled-modal-title" className="modal-title">
                             Comments
                           </h2>
-                            {
-                              <ul id="unstyled-modal-description" className="modal-description">{this.state.selectedUserForComments?.commentedPhotos.map((photo, index) => <li key={photo._id+index}>{photo?.comments?.comment}</li>)}</ul>
-                              }
+                          
+                            
+                            {this.state.selectedUserForComments?.commentedPhotos.map((photo, index) => (
+                            <div key={photo._id + index}>
+                              
+                              
+                              <Link to={`/photos/${this.state.selectedUserForComments._id}`}>
+                                <Avatar src={`/images/${photo.file_name}`} alt={`Thumbnail of ${photo._id}`} /> 
+                              </Link>
+                              <Link to={`/photos/${this.state.selectedUserForComments._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                              <p>{photo?.comments?.comment}</p>
+                              </Link>
+                            </div>
+                          ))}
                         </ModalContent>
                       </Modal>        
              
