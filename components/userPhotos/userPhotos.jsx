@@ -5,6 +5,9 @@ import {
   CardContent,
   CardMedia, Button
 } from '@mui/material';
+import {
+  Favorite, FavoriteBorder, ThumbUp
+} from '@mui/icons-material';
 import axios from 'axios';
 
 class UserPhotos extends React.Component {
@@ -194,8 +197,6 @@ class UserPhotos extends React.Component {
                         </form>
                       </div>
                     </CardContent>
-
-
                   </Card>
               ))
           )}

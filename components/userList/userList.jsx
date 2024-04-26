@@ -191,6 +191,7 @@ class UserList extends React.Component {
                               </Link>
                               <Link to={`/photos/${this.state.selectedUserForComments._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                               <p>{photo?.comments?.comment}</p>
+                              
                               </Link>
                             </div>
                           ))}
