@@ -145,15 +145,16 @@ class UserPhotos extends React.Component {
       console.error('Detailed error:', error.response.data);  
     }
   };
+
   handleDeleteComment = async (photoId, commentId) => {
     try {
       console.log(photoId,commentId);
       await axios.delete(`/photos/${photoId}/comments/${commentId}`);
-      // Update local state to reflect the deletion
       this.setState(state => {
         const photos = state.photos.map(photo => {
           if (photo._id === photoId) {
             const filteredComments = photo.comments.filter(comment => comment._id !== commentId);
+            this.props.fetchUserList(); 
             return { ...photo, comments: filteredComments };
           }
           return photo;
@@ -164,6 +165,7 @@ class UserPhotos extends React.Component {
       console.error('Error deleting comment:', error);
     }
   };
+
   render() {
     const { userList, photos, user, loading } = this.state;
 
