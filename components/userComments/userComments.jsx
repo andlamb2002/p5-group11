@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Avatar } from '@mui/material';
+import { Typography, Avatar } from '@mui/material';
 
 const userComments = () => {
   const { userId } = useParams();
@@ -25,12 +25,13 @@ const userComments = () => {
 
   return (
     <div>
-      <h1>User Comments</h1>
+      <Typography variant="h4" component="h1" gutterBottom>User Comments</Typography>
+      <br />
       {error ? (
         <p>{error}</p>
       ) : (
         comments.map((comment, index) => (
-          <div key={index} style={{ marginBottom: "20px" }}>
+          <div key={index} style={{ marginBottom: "20px" , marginTop: "20px"}}>
             <Link to={`/photos/${userId}`}>
               <Avatar
                 src={`/images/${comment.fileName}`}
@@ -39,11 +40,14 @@ const userComments = () => {
               />
             </Link>
 
+            <Link to={`/photos/${userId}`} style={{ textDecoration: 'none', color: 'inherit', fontFamily: 'Roboto', marginBottom: "20px" }}>
+              <div style={{ marginTop: "20px" , padding: "20px", border: "black", background: "#ededed", borderRadius: "10%", width: "60%"}}>
+                <p style={{ color: 'grey'}} >Date: {new Date(comment.dateTime).toLocaleString()}</p>
+                <br />
+                <p style={{ color: 'black' }} >{comment.commentText}</p>
+              </div>
+            </Link>
 
-            <div style={{ marginTop: "10px" }}>
-              <p>{comment.commentText}</p>
-              <p>Date: {new Date(comment.dateTime).toLocaleString()}</p>
-            </div>
           </div>
         ))
       )}
