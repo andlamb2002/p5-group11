@@ -161,6 +161,44 @@ app.delete("/photos/:photoId", function (request, response) {
     });
   });
 });
+app.delete("/photos/:photoId/comments/:commentId", function (request, response) {
+  if (!request.session.user) {
+    response.status(401).send('Unauthorized - Please log in.');
+    return;
+  }
+
+  const { photoId, commentId } = request.params;
+
+  Photo.findById(photoId, function (err, photo) {
+    if (err || !photo) {
+      response.status(404).send('Photo not found');
+      return;
+    }
+
+    // Check if the comment belongs to the logged-in user
+    const comment = photo.comments.id(commentId);
+    if (!comment) {
+      response.status(404).send('Comment not found');
+      return;
+    }
+    
+    if (comment.user_id.toString() !== request.session.user._id.toString()) {
+      response.status(403).send('Unauthorized to delete this comment');
+      return;
+    }
+
+    comment.remove();
+
+    photo.save(function (saveErr) {
+      if (saveErr) {
+        response.status(500).send('Error updating photo');
+        return;
+      }
+      response.send('Comment deleted successfully');
+    });
+  });
+});
+
 
 app.post('/admin/logout', function (request, response) {
   if (request.session.user) {
