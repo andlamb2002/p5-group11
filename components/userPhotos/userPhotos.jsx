@@ -3,11 +3,9 @@ import {
   Typography,
   Card,
   CardContent,
-  CardMedia, Button
+  CardMedia, Button, Avatar
 } from '@mui/material';
-import {
-  Favorite, FavoriteBorder, ThumbUp
-} from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 class UserPhotos extends React.Component {
@@ -18,7 +16,6 @@ class UserPhotos extends React.Component {
       photos: [],
       user: null,
       loading: true,
-      favorite_ids: [],
     };
     console.log('UserPhotos constructor');
   }
@@ -71,20 +68,6 @@ class UserPhotos extends React.Component {
       console.error('Error fetching user photos:', error);
     }
 
-    axios
-      .get(`/getFavorites`)
-        .then((response) => {
-          console.log("Received Favorites:", response.data);
-
-          let favorite_ids = response.data.map((photo) => photo._id);
-          this.setState({ favorite_ids });
-          })
-          .catch((err) => {
-          console.error("Error fetching favorites:", err.response || err.message);
-          // Handle error and update state accordingly
-          this.setState({ loading: false });
-        });
-
   }
   handleAddComment = async (event, photoId) => {
     event.preventDefault();
@@ -116,16 +99,22 @@ class UserPhotos extends React.Component {
 
   render() {
     const { userList, photos, user, loading } = this.state;
+    console.log('lets see user now', user);
     console.log('user photos render',photos);
+    console.log("userList",  userList);
 
     return (
         <div>
           <Typography variant="h4">Photos</Typography>
-
-          <Button variant="contained" component="a" href={"#/users/" + this.state.user_id}>
-                        User Detail
-          </Button>
-
+          <br /><br />
+          {user && (
+          <Link to={`/users/${user._id}`}>
+            <Button variant="contained" component="a" >
+              User Detail
+            </Button>
+          </Link>
+          )}
+          <br />
           {loading ? (
               <Typography variant="body1">Loading photos...</Typography>
           ) : (
@@ -143,15 +132,16 @@ class UserPhotos extends React.Component {
                         style={{objectFit: 'cover', width: '50%', height: '50%'}}
                     />
                     <CardContent>
-                      favorited={this.state.favorite_ids.includes(photo._id)}
                       <Typography variant="h6" gutterBottom>
                         Comments:
                       </Typography>
                       {photo.comments && photo.comments.length > 0 ? (
                           photo.comments.map((comment) => {
                             const commentedUser = userList.find((cUser) => cUser._id === comment.user_id);
+                            console.log("lets see commentedUser", commentedUser);
                             return commentedUser ? (
                                 <div key={comment._id} style={{ marginBottom: '10px' }}>
+                                  
                                   <Typography variant="subtitle2" style={{ fontWeight: 'bold' }}>
                                     {commentedUser.first_name} {commentedUser.last_name}
                                   </Typography>
