@@ -165,29 +165,6 @@ app.post('/commentsOfPhoto/:photo_id', function (request, response) {
   });
 });
 
-//request.body has photo_id
-app.post(`/addToFavorites`, function(request, response) {
-  if (!request.session.user) {
-    response.status(401).send("Unauthorized - Please Login");
-    return;
-  }
-  let curr_user_id = request.session.user_id;
-  let photo_id = request.body.photo_id;
-  User.findOne({ _id: curr_user_id }, function(err, user) {
-    if (err) {
-      response.status(400).send("invalid user id");
-      return;
-    }
-    if (!user.favorites.includes(photo_id)) {
-      //in case it was already favorited?
-      user.favorites.push(photo_id);
-      user.save();
-    }
-    response.status(200).send();
-  });
-});
-
-
 /**
  * URL /admin/logout - clears user session
  */
@@ -433,6 +410,43 @@ app.get("/user/list", function (request, response) {
     );
     /* response.json(users); */
   });
+});
+
+app.get("/user/:id/comments", function (request, response) {
+  if (!request.session.user) {
+    response.status(401).send('Unauthorized - Please log in.');
+    return;
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(request.params.id)) {
+    response.status(400).send("Invalid user ID.");
+    return;
+  }
+
+  Photo.find({ 'comments.user_id': request.params.id })
+    .select('comments file_name')
+    .exec((err, photos) => {
+      if (err) {
+        console.error("Error fetching comments:", err);
+        response.status(500).send(JSON.stringify(err));
+        return;
+      }
+      if (photos.length === 0) {
+        response.status(404).send("No comments found for user with ID:" + request.params.id);
+        return;
+      }
+      const comments = photos.reduce((acc, photo) => {
+        const userComments = photo.comments.filter(comment => comment.user_id.toString() === request.params.id);
+        userComments.forEach(comment => acc.push({
+          photoId: photo._id,
+          fileName: photo.file_name,
+          commentText: comment.comment,
+          dateTime: comment.date_time
+        }));
+        return acc;
+      }, []);
+      response.json(comments);
+    });
 });
 
 /**
