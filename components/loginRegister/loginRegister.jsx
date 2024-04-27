@@ -12,19 +12,21 @@ import { FaRegUser, FaUnlockAlt } from "react-icons/fa";
 class LoginRegister extends React.Component {
     constructor(props) {
         super(props);
+        this.initialUserState = {
+            first_name: '',
+            last_name: '',
+            location: '',
+            description: '',
+            occupation: '',
+            register_login_name: '',
+            register_password: '',
+            password_repeat: '',
+        };
+
         this.state = {
-            user: {
-                first_name: undefined,
-                last_name: undefined,
-                location: undefined,
-                description: undefined,
-                occupation: undefined,
-                register_login_name: undefined,
-                register_password: undefined,
-                password_repeat: undefined,
-            },
+            user: {...this.initialUserState},
             loginName: '',
-            password: '', 
+            password: '',
             message: null
         };
 
@@ -91,13 +93,14 @@ class LoginRegister extends React.Component {
         })
         .then(response => {
             if (response && response.data) {
-                const rUser = response.data;
+                this.resetRegistrationForm(); 
+                // const rUser = response.data;
                 this.setState({
                     showRegistrationSuccess: true,
                     showRegistrationError: false,
                     showRequiredFieldsWarning: false,
                 });
-                window.location.href = `#/users/${rUser._id}`;
+                // window.location.href = `/users/${rUser._id}`;
             } else {
                 console.error('Unexpected response format:', response);
             }
@@ -111,6 +114,10 @@ class LoginRegister extends React.Component {
             console.error('Error during registration:', error);
         });
     };
+
+    resetRegistrationForm() {
+        this.setState({ user: {...this.initialUserState} });
+    }
 
     handleChange(event) {
         const {id, value} = event.target;
@@ -177,54 +184,115 @@ class LoginRegister extends React.Component {
                     
                     <h1>User Registration</h1>
                     <Box component="form" autoComplete="off">
-                        
-                        
                         <div>
-                            <TextField id="register_login_name" label="Login Name" variant="outlined" fullWidth
-                                       margin="normal" required={true} onChange={this.handleChange}/>
+                            <TextField 
+                                id="register_login_name"
+                                label="Login Name"
+                                variant="outlined"
+                                fullWidth
+                                margin="normal"
+                                required
+                                value={this.state.user.register_login_name}
+                                onChange={this.handleChange}
+                            />
                         </div>
                         <div>
-                            <TextField id="register_password" label="Password" variant="outlined" fullWidth
-                                       margin="normal" type="password" required={true} onChange={this.handleChange}/>
+                            <TextField 
+                                id="register_password"
+                                label="Password"
+                                variant="outlined"
+                                fullWidth
+                                margin="normal"
+                                type="password"
+                                required
+                                value={this.state.user.register_password}
+                                onChange={this.handleChange}
+                            />
                         </div>
                         <div>
-                            <TextField id="password_repeat" label="Repeat Password" variant="outlined" fullWidth
-                                       margin="normal" type="password" required={true} onChange={this.handleChange}/>
+                            <TextField 
+                                id="password_repeat"
+                                label="Repeat Password"
+                                variant="outlined"
+                                fullWidth
+                                margin="normal"
+                                type="password"
+                                required
+                                value={this.state.user.password_repeat}
+                                onChange={this.handleChange}
+                            />
                         </div>
                         <div>
-                            <TextField id="first_name" label="First Name" variant="outlined" fullWidth
-                                       margin="normal" autoComplete="off" required={true} onChange={this.handleChange}/>
+                            <TextField 
+                                id="first_name"
+                                label="First Name"
+                                variant="outlined"
+                                fullWidth
+                                margin="normal"
+                                autoComplete="off"
+                                required
+                                value={this.state.user.first_name}
+                                onChange={this.handleChange}
+                            />
                         </div>
                         <div>
-                            <TextField id="last_name" label="Last Name" variant="outlined" fullWidth
-                                       margin="normal" required={true} onChange={this.handleChange}/>
+                            <TextField 
+                                id="last_name"
+                                label="Last Name"
+                                variant="outlined"
+                                fullWidth
+                                margin="normal"
+                                required
+                                value={this.state.user.last_name}
+                                onChange={this.handleChange}
+                            />
                         </div>
                         <div>
-                            <TextField id="location" label="Location" variant="outlined" fullWidth
-                                       margin="normal" onChange={this.handleChange}/>
+                            <TextField 
+                                id="location"
+                                label="Location"
+                                variant="outlined"
+                                fullWidth
+                                margin="normal"
+                                value={this.state.user.location}
+                                onChange={this.handleChange}
+                            />
                         </div>
                         <div>
-                            <TextField id="description" label="Description" variant="outlined" multiline rows={4}
-                                       fullWidth margin="normal" onChange={this.handleChange}/>
+                            <TextField 
+                                id="description"
+                                label="Description"
+                                variant="outlined"
+                                multiline
+                                rows={4}
+                                fullWidth
+                                margin="normal"
+                                value={this.state.user.description}
+                                onChange={this.handleChange}
+                            />
                         </div>
                         <div>
-                            <TextField id="occupation" label="Occupation" variant="outlined" fullWidth
-                                       margin="normal" onChange={this.handleChange}/>
+                            <TextField 
+                                id="occupation"
+                                label="Occupation"
+                                variant="outlined"
+                                fullWidth
+                                margin="normal"
+                                value={this.state.user.occupation}
+                                onChange={this.handleChange}
+                            />
                         </div>
                         <div>
                             <Button variant="contained" onClick={this.handleRegister}>
                                 Register Me
                             </Button>
                         </div>
-{/* 
-                        <div className="register-link">
-                            <p>Already have a account? <a href="#" onClick={loginLink}></a> </p>
-                        </div> */}
 
-                        {this.state.showRequiredFieldsWarning && <Alert severity = "warning">Please fill in all required fields.</Alert>}
+                        {this.state.showRequiredFieldsWarning && <Alert severity="warning">Please fill in all required fields.</Alert>}
                         {this.state.showRegistrationSuccess && <Alert severity="success">Registration Succeeded</Alert>}
                         {this.state.showRegistrationError && <Alert severity="error">Registration Failed</Alert>}
                     </Box>
+
                     <br />
                     <br />
                     <br />

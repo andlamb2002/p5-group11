@@ -22,12 +22,11 @@ class UserPhotos extends React.Component {
       user: null,
       loading: true,
     };
-    console.log('UserPhotos constructor');
   }
 
   componentDidMount() {
-    console.log('UserPhotos componentDidMount');
     this.fetchUserPhotos();
+    console.log('Type of fetchUserList:', typeof this.props.fetchUserList);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -48,8 +47,6 @@ class UserPhotos extends React.Component {
   }
 
   async fetchUserPhotos() {
-    console.log('UserPhotos fetchUserPhotos');
-    
     const userId = this.props.match.params.userId;
     const userListUrl = '/user/list';
     const userUrl = `/user/${userId}`;
@@ -61,7 +58,6 @@ class UserPhotos extends React.Component {
         axios.get(userUrl),
         axios.get(photosUrl)
       ]);
-      console.log('userListResponse, userResponse, photosResponse',userListResponse, userResponse, photosResponse);
 
       this.setState({
         userList: userListResponse.data,
@@ -75,11 +71,11 @@ class UserPhotos extends React.Component {
     } catch (error) {
       console.error('Error fetching user photos:', error);
     }
-
   }
+  
   handleAddComment = async (event, photoId) => {
     event.preventDefault();
-    const commentText = event.target.elements.commentText.value;
+    const commentText = event.target.elements.commentText.value.trim(); 
     if (!commentText) {
       console.error("Comment text cannot be empty");
       return;
@@ -92,6 +88,7 @@ class UserPhotos extends React.Component {
       this.setState(state => {
         const photos = state.photos.map(photo => {
           if (photo._id === photoId) {
+            this.props.fetchUserList(); 
             return updatedPhoto;
           }
           return photo;
@@ -99,16 +96,21 @@ class UserPhotos extends React.Component {
         return { photos };
       });
 
-      event.target.elements.commentText.value = '';
+      event.target.elements.commentText.value = ''; 
     } catch (error) {
       console.error("Error adding comment:", error);
     }
-  };
+};
+
   addNewPhoto = (newPhoto) => {
-    this.setState(prevState => ({
-      photos: [...prevState.photos, newPhoto]
-    }));
+    if (this.props.loggedInUserId === this.props.match.params.userId) {
+      this.setState(prevState => ({
+        photos: [...prevState.photos, newPhoto]
+      }));
+    }
+    this.props.fetchUserList(); 
   };
+
   deletePhoto = async (photoId) => {
     try {
       const response = await axios.delete(`/photos/${photoId}`);
@@ -116,11 +118,13 @@ class UserPhotos extends React.Component {
         this.setState(prevState => ({
           photos: prevState.photos.filter(photo => photo._id !== photoId),
         }));
+        this.props.fetchUserList(); 
       }
     } catch (error) {
       console.error('Error deleting photo:', error);
     }
   };
+
   handleLike = async (photoId, action) => {
     try {
       const url = `/photos/${photoId}/${action}`; 
@@ -162,9 +166,6 @@ class UserPhotos extends React.Component {
   };
   render() {
     const { userList, photos, user, loading } = this.state;
-    console.log('lets see user now', user);
-    console.log('user photos render',photos);
-    console.log("userList",  userList);
 
     return (
       <div>
