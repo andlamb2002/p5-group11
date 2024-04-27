@@ -22,9 +22,19 @@ class PhotoShare extends React.Component {
     this.state = {
       topName: 'Please Login',
       userIsLoggedIn: false,
+      photoCount: 0,
+      commentCount: 0,
       //current_user: undefined
     };
   }
+
+  incrementPhotoCount = () => {
+    this.setState((prevState) => ({ photoCount: prevState.photoCount + 1 }));
+  };
+
+  incrementCommentCount = () => {
+    this.setState((prevState) => ({ commentCount: prevState.commentCount + 1 }));
+  };
   
 setTopName = (name) => {
   this.setState({ topName: name });
@@ -42,6 +52,7 @@ render() {
         <Grid container spacing={8}>
           <Grid item xs={12}>
             <TopBar topName={this.state.topName} setTopName={this.setTopName} setUserLoggedIn={this.setUserLoggedIn} userIsLoggedIn={this.state.userIsLoggedIn}/>
+            
           </Grid>
           <div className="main-topbar-buffer" />
           <Grid item sm={3}>

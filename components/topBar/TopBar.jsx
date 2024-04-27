@@ -71,6 +71,7 @@ class TopBar extends React.Component {
       },
     })
     .then(() => { 
+      this.props.incrementPhotoCount();
       this.props.setTopName('Photo uploaded successfully.');
       console.log("Photo uploaded successfully.");
     })

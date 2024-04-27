@@ -127,7 +127,7 @@ class UserList extends React.Component {
 
     render() {
         const { userList } = this.state;
-        
+        /*const { photoCount, commentCount } = this.props;*/
         return (
          <div >
            <div>

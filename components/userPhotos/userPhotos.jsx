@@ -94,6 +94,8 @@ class UserPhotos extends React.Component {
       return;
     }
 
+    //this.props.incrementCommentCount();
+
     try {
       const response = await axios.post(`/commentsOfPhoto/${photoId}`, { comment: commentText });
       const updatedPhoto = response.data;
