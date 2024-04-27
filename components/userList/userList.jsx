@@ -54,7 +54,7 @@ class UserList extends React.Component {
                                         height: '40px',
                                         position: 'absolute',
                                         right: '50px',
-                                        
+                                        bottom: '0'
                                     }}
                                 >
                                     {user.photosCount}
@@ -71,7 +71,7 @@ class UserList extends React.Component {
                                             height: '40px',
                                             position: 'absolute',
                                             right: '0',
-                                            
+                                            bottom: '0'
                                         }}
                                     >
                                         {user.commentsCount}
