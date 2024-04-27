@@ -31,15 +31,6 @@ class UserDetail extends React.Component {
     const { userId } = match.params;
 
     const url = `/user/${userId}`;
-    /*
-    fetchModel(url) // Use the FetchModel function
-      .then((response) => {
-        this.setState({ user: response.data });
-      })
-      .catch((error) => {
-        console.error('Error fetching user details:', error);
-      }); */
-    
       axios.get(url) 
       .then((response) => {
         this.setState({ user: response.data });

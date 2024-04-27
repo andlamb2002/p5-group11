@@ -76,7 +76,34 @@ mongoose.connect("mongodb://127.0.0.1/project6", {
 // (http://expressjs.com/en/starter/static-files.html) do all the work for us.
 
 app.use(express.static(__dirname));
+/*
+function getSessionUserID(request){
+  return request.session.user_id;
+  //return session.user._id;
+}
 
+function hasNoUserSession(request, response){
+  //return false;
+  if (!getSessionUserID(request)){
+    response.status(401).send();
+    return true;
+  }
+  // if (session.user === undefined){
+  //   response.status(401).send();
+  //   return true;
+  // }
+  return false;
+}
+*/
+
+
+app.get("/", function (request, response) {
+  response.send("Simple web server of files from " + __dirname);
+});
+
+/**
+ * URL /admin/login - Returns user object on successful login
+ */
 app.post('/admin/login', function (request, response) {
   const { login_name, password } = request.body;
 
@@ -95,7 +122,9 @@ app.post('/admin/login', function (request, response) {
   });
 });
 
-
+/**
+ * URL /commentsOfPhoto/:photo_id - adds a new comment on photo for the current user
+ */
 app.post('/commentsOfPhoto/:photo_id', function (request, response) {
   if (!request.session.user) {
     response.status(401).send('Unauthorized');
@@ -162,6 +191,35 @@ app.delete("/photos/:photoId", function (request, response) {
   });
 });
 
+app.delete("/photos/:photoId", function (request, response) {
+  const photoId = request.params.photoId;
+
+  Photo.findById(photoId, function (err, photo) {
+
+    if (photo.user_id.toString() !== request.session.user._id.toString()) {
+      response.status(403).send('You can only delete your own photos.');
+      return;
+    }
+    Photo.findByIdAndRemove(photoId, function (deleteErr) {
+      if (deleteErr) {
+        console.error("Error deleting photo:", deleteErr);
+        response.status(500).send('Internal Server Error');
+        return;
+      }
+      const filePath = path.join(__dirname, 'images', photo.file_name);
+      fs.unlink(filePath, function (unlinkErr) {
+        if (unlinkErr) {
+          console.error("Error deleting photo file:", unlinkErr);
+        }
+        response.status(200).send('Photo deleted successfully');
+      });
+    });
+  });
+});
+
+/**
+ * URL /admin/logout - clears user session
+ */
 app.post('/admin/logout', function (request, response) {
   if (request.session.user) {
     request.session.destroy(function(err) {
@@ -185,7 +243,12 @@ app.get('/check-login', function (request, response) {
   }
 });
 
+
+/**
+ * URL /photos/new - adds a new photo for the current user
+ */
 app.post('/photos/new', processFormBody.single('uploadedphoto'), function (request, response) {
+  
   if (!request.file) {
     response.status(400).send('No file uploaded.');
     return;
@@ -243,6 +306,10 @@ app.post("/user", function (request, response) {
   if (password_repeat === ""){
     console.error("Error in /user pr", password_repeat);
     response.status(400).send("Verify password is required");
+    return;
+  }
+  if (register_password !== password_repeat) {
+    response.status(400).send("Passwords do not match");
     return;
   }
 
@@ -435,8 +502,71 @@ app.get("/user/list", function (request, response) {
       response.status(500).send(JSON.stringify(err));
       return; 
     }
-    response.json(users);
+
+    async.each(
+      users,
+      async function(user){
+        const userCommentedPhotos = await Photo.aggregate([
+          { $unwind: "$comments" },
+          { $match: { 'comments.user_id': user._id } }
+      ]);
+        console.log('userCommentedPhotos',user._id,JSON.stringify(userCommentedPhotos));
+
+        //Photos Count Bubble
+        const photosCount = await Photo.countDocuments({ user_id: user._id });
+        user.photosCount = photosCount;
+        user.commentsCount = userCommentedPhotos.length;
+        user.commentedPhotos = userCommentedPhotos;
+      },
+
+      function(errr){
+        if(errr){
+          console.error("Error fetching photos count:", errr);
+          response.status(500).send(JSON.stringify(errr));
+        } else {
+          response.json(users);
+        }
+      }
+    );
+    /* response.json(users); */
   });
+});
+
+app.get("/user/:id/comments", function (request, response) {
+  if (!request.session.user) {
+    response.status(401).send('Unauthorized - Please log in.');
+    return;
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(request.params.id)) {
+    response.status(400).send("Invalid user ID.");
+    return;
+  }
+
+  Photo.find({ 'comments.user_id': request.params.id })
+    .select('comments file_name')
+    .exec((err, photos) => {
+      if (err) {
+        console.error("Error fetching comments:", err);
+        response.status(500).send(JSON.stringify(err));
+        return;
+      }
+      if (photos.length === 0) {
+        response.status(404).send("No comments found for user with ID:" + request.params.id);
+        return;
+      }
+      const comments = photos.reduce((acc, photo) => {
+        const userComments = photo.comments.filter(comment => comment.user_id.toString() === request.params.id);
+        userComments.forEach(comment => acc.push({
+          photoId: photo._id,
+          fileName: photo.file_name,
+          commentText: comment.comment,
+          dateTime: comment.date_time
+        }));
+        return acc;
+      }, []);
+      response.json(comments);
+    });
 });
 
 /**
@@ -449,6 +579,23 @@ app.get("/user/:id", function (request, response) {
   }
 
   User.findById(request.params.id, '_id first_name last_name location description occupation', (err, user) => {
+    if (err || !user) {
+      console.log("User with _id:" + request.params.id + " not found.");
+      response.status(400).send("User not found");
+      return;
+    }
+    response.json(user);
+  });
+});
+
+app.get("/photos/:id", function (request, response) {
+  if (!request.session.user) {
+    response.status(401).send('Unauthorized - Please log in.');
+    return;
+  }
+
+  Photo.find(request.params.id, '_id first_name last_name location description occupation', (err, user) => {
+    console.log('user',user, err);
     if (err || !user) {
       console.log("User with _id:" + request.params.id + " not found.");
       response.status(400).send("User not found");
