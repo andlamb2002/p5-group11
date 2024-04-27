@@ -100,10 +100,13 @@ class UserPhotos extends React.Component {
       console.error("Error adding comment:", error);
     }
 };
+
   addNewPhoto = (newPhoto) => {
-    this.setState(prevState => ({
-      photos: [...prevState.photos, newPhoto]
-    }));
+    if (this.props.loggedInUserId === this.props.match.params.userId) {
+      this.setState(prevState => ({
+        photos: [...prevState.photos, newPhoto]
+      }));
+    }
     this.props.fetchUserList(); 
   };
 
