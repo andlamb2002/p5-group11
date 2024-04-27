@@ -62,7 +62,7 @@ render() {
                     userIsLoggedIn ? <UserDetail {...props} /> : <Redirect to="/login-register" />
                 )} />
                 <Route path="/photos/:userId" render={(props) => (
-                    userIsLoggedIn ? <UserPhotos {...props} setTopName={this.setTopName} /> : <Redirect to="/login-register" />
+                    userIsLoggedIn ? <UserPhotos {...props} loggedInUserId={loggedInUserId} setTopName={this.setTopName} /> : <Redirect to="/login-register" />
                 )} />
                 <Route path="/comments/:userId" render={(props) => (
                   userIsLoggedIn ? <UserComments {...props} /> : <Redirect to="/login-register" />

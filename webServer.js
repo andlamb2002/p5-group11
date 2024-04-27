@@ -664,23 +664,6 @@ app.get("/user/:id", function (request, response) {
   });
 });
 
-app.get("/photos/:id", function (request, response) {
-  if (!request.session.user) {
-    response.status(401).send('Unauthorized - Please log in.');
-    return;
-  }
-
-  Photo.find(request.params.id, '_id first_name last_name location description occupation', (err, user) => {
-    console.log('user',user, err);
-    if (err || !user) {
-      console.log("User with _id:" + request.params.id + " not found.");
-      response.status(400).send("User not found");
-      return;
-    }
-    response.json(user);
-  });
-});
-
 /**
  * URL /photosOfUser/:id - Returns the Photos for User (id).
  */

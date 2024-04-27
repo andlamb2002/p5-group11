@@ -3,7 +3,7 @@ import {
   Typography,
   Card,
   CardContent,
-  CardMedia, Button, Avatar,
+  CardMedia, Button, 
   IconButton,
   Box,
 } from '@mui/material';
@@ -20,7 +20,6 @@ class UserPhotos extends React.Component {
       userList: [],
       photos: [],
       user: null,
-      loading: true,
       loading: true,
     };
     console.log('UserPhotos constructor');
