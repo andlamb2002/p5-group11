@@ -17,3 +17,26 @@
 .user-list-item:hover {
     background-color: #f0f0f0;
 }
+
+.greenphotos{
+    background-color: green;
+    color: white; /* Add text color */
+    border: none; /* Remove border */
+    border-radius: 50%; /* Make it circular */
+    width: 40px;
+    height: 40px;
+    padding: 0; /* Remove padding */
+    display: flex; /* Align content horizontally and vertically */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    font-size: 14px;
+}
+
+.gp{
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: rgb(253, 149, 149);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding:10px
+}

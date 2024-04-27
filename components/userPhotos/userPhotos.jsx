@@ -3,10 +3,11 @@ import {
   Typography,
   Card,
   CardContent,
-  CardMedia,
+  CardMedia, Button, Avatar,
   IconButton,
   Box,
 } from '@mui/material';
+import { Link } from 'react-router-dom';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -20,10 +21,13 @@ class UserPhotos extends React.Component {
       photos: [],
       user: null,
       loading: true,
+      loading: true,
     };
+    console.log('UserPhotos constructor');
   }
 
   componentDidMount() {
+    console.log('UserPhotos componentDidMount');
     this.fetchUserPhotos();
   }
 
@@ -45,6 +49,8 @@ class UserPhotos extends React.Component {
   }
 
   async fetchUserPhotos() {
+    console.log('UserPhotos fetchUserPhotos');
+    
     const userId = this.props.match.params.userId;
     const userListUrl = '/user/list';
     const userUrl = `/user/${userId}`;
@@ -56,6 +62,7 @@ class UserPhotos extends React.Component {
         axios.get(userUrl),
         axios.get(photosUrl)
       ]);
+      console.log('userListResponse, userResponse, photosResponse',userListResponse, userResponse, photosResponse);
 
       this.setState({
         userList: userListResponse.data,
@@ -69,6 +76,7 @@ class UserPhotos extends React.Component {
     } catch (error) {
       console.error('Error fetching user photos:', error);
     }
+
   }
   handleAddComment = async (event, photoId) => {
     event.preventDefault();
@@ -155,10 +163,22 @@ class UserPhotos extends React.Component {
   };
   render() {
     const { userList, photos, user, loading } = this.state;
+    console.log('lets see user now', user);
+    console.log('user photos render',photos);
+    console.log("userList",  userList);
 
     return (
       <div>
           <Typography variant="h4">Photos</Typography>
+          <br /><br />
+          {user && (
+          <Link to={`/users/${user._id}`}>
+            <Button variant="contained" component="a" >
+              User Detail
+            </Button>
+          </Link>
+          )}
+          <br />
           {loading ? (
               <Typography variant="body1">Loading photos...</Typography>
           ) : (
