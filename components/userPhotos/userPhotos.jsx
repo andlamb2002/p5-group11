@@ -3,7 +3,9 @@ import {
   Typography,
   Card,
   CardContent,
-  CardMedia, Button
+  CardMedia,
+  IconButton,
+  Box,
 } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -19,11 +21,9 @@ class UserPhotos extends React.Component {
       user: null,
       loading: true,
     };
-    console.log('UserPhotos constructor');
   }
 
   componentDidMount() {
-    console.log('UserPhotos componentDidMount');
     this.fetchUserPhotos();
   }
 
@@ -45,8 +45,6 @@ class UserPhotos extends React.Component {
   }
 
   async fetchUserPhotos() {
-    console.log('UserPhotos fetchUserPhotos');
-    
     const userId = this.props.match.params.userId;
     const userListUrl = '/user/list';
     const userUrl = `/user/${userId}`;
@@ -58,7 +56,6 @@ class UserPhotos extends React.Component {
         axios.get(userUrl),
         axios.get(photosUrl)
       ]);
-      console.log('userListResponse, userResponse, photosResponse',userListResponse, userResponse, photosResponse);
 
       this.setState({
         userList: userListResponse.data,
@@ -72,21 +69,6 @@ class UserPhotos extends React.Component {
     } catch (error) {
       console.error('Error fetching user photos:', error);
     }
-
-    axios
-      .get(`/getFavorites`)
-        .then((response) => {
-          console.log("Received Favorites:", response.data);
-
-          let favorite_ids = response.data.map((photo) => photo._id);
-          this.setState({ favorite_ids });
-          })
-          .catch((err) => {
-          console.error("Error fetching favorites:", err.response || err.message);
-          // Handle error and update state accordingly
-          this.setState({ loading: false });
-        });
-
   }
   handleAddComment = async (event, photoId) => {
     event.preventDefault();
@@ -155,7 +137,6 @@ class UserPhotos extends React.Component {
 
   render() {
     const { userList, photos, user, loading } = this.state;
-    console.log('user photos render',photos);
 
     return (
       <div>
