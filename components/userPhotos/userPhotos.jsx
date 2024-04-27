@@ -51,13 +51,19 @@ class UserPhotos extends React.Component {
     const userListUrl = '/user/list';
     const userUrl = `/user/${userId}`;
     const photosUrl = `/photosOfUser/${userId}`;
-
     try {
       const [userListResponse, userResponse, photosResponse] = await Promise.all([
         axios.get(userListUrl),
         axios.get(userUrl),
         axios.get(photosUrl)
       ]);
+      const sortedPhotos = photosResponse.data.sort((a, b) => {
+        const likeDifference = b.likes.length - a.likes.length;
+        if (likeDifference !== 0) {
+          return likeDifference;
+        }
+        return new Date(b.date_time) - new Date(a.date_time);
+      });
 
       this.setState({
         userList: userListResponse.data,
@@ -70,6 +76,7 @@ class UserPhotos extends React.Component {
       });
     } catch (error) {
       console.error('Error fetching user photos:', error);
+      this.setState({ loading: false });
     }
   }
   
