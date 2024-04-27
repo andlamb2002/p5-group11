@@ -2,32 +2,15 @@ import React from 'react';
 import { Divider, List, ListItem, Button, IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
 import './userList.css';
-import axios from 'axios';
 
 class UserList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            userList: [],
-        };
-    }
-
-    async componentDidMount() {
-        try {
-            const url = '/user/list';
-            const usersResponse = await axios.get(url);
-            this.setState({ userList: usersResponse.data });
-        } catch (error) {
-            console.error("Failed to fetch users:", error);
-        }
-    }
 
     handleUserClick = (user) => {
         this.props.setTopName(`User Details of ${user.first_name} ${user.last_name}`);
     };
 
     render() {
-        const { userList } = this.state;
+        const { userList } = this.props; 
 
         return (
             <div>

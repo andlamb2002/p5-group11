@@ -447,7 +447,7 @@ app.get("/test/:p1", function (request, response) {
       }
 
       // We got the object - return it in JSON format.
-      console.log("SchemaInfo", info[0]);
+      // console.log("SchemaInfo", info[0]);
       response.end(JSON.stringify(info[0]));
     });
   } else if (param === "counts") {
@@ -510,7 +510,7 @@ app.get("/user/list", function (request, response) {
           { $unwind: "$comments" },
           { $match: { 'comments.user_id': user._id } }
       ]);
-        console.log('userCommentedPhotos',user._id,JSON.stringify(userCommentedPhotos));
+        // console.log('userCommentedPhotos',user._id,JSON.stringify(userCommentedPhotos));
 
         //Photos Count Bubble
         const photosCount = await Photo.countDocuments({ user_id: user._id });
@@ -578,24 +578,7 @@ app.get("/user/:id", function (request, response) {
     return;
   }
 
-  User.findById(request.params.id, '_id first_name last_name location description occupation', (err, user) => {
-    if (err || !user) {
-      console.log("User with _id:" + request.params.id + " not found.");
-      response.status(400).send("User not found");
-      return;
-    }
-    response.json(user);
-  });
-});
-
-app.get("/photos/:id", function (request, response) {
-  if (!request.session.user) {
-    response.status(401).send('Unauthorized - Please log in.');
-    return;
-  }
-
-  Photo.find(request.params.id, '_id first_name last_name location description occupation', (err, user) => {
-    console.log('user',user, err);
+  User.findById(request.params.id, '_id first_name last_name location description occupation likes', (err, user) => {
     if (err || !user) {
       console.log("User with _id:" + request.params.id + " not found.");
       response.status(400).send("User not found");

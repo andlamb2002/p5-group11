@@ -7,8 +7,9 @@ import {
   Grid, Paper
 } from '@mui/material';
 import './styles/main.css';
+import axios from 'axios';
 
-// import necessary components
+// Import necessary components
 import TopBar from './components/topBar/TopBar';
 import UserDetail from './components/userDetail/userDetail';
 import UserPhotos from './components/userPhotos/userPhotos';
@@ -23,37 +24,57 @@ class PhotoShare extends React.Component {
       topName: 'Please Login',
       userIsLoggedIn: false,
       loggedInUserId: null,
+      userList: [],
     };
     this.userPhotosRef = React.createRef();
   }
-  
-setTopName = (name) => {
-  this.setState({ topName: name });
-};
 
-setUserLoggedIn = (isLoggedIn, userId) => {
-  this.setState({ userIsLoggedIn: isLoggedIn, loggedInUserId: userId });
-};
+  fetchUserList = async () => {
+    try {
+      const response = await axios.get('/user/list');
+      this.setState({ userList: response.data });
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
+  };
 
-render() {
-  const {userIsLoggedIn, loggedInUserId} = this.state;
-  return (
-    <BrowserRouter>
-      <div>
-        <Grid container spacing={8}>
-          <Grid item xs={12}>
-            <TopBar topName={this.state.topName} setTopName={this.setTopName} setUserLoggedIn={this.setUserLoggedIn} userIsLoggedIn={this.state.userIsLoggedIn} addNewPhoto={this.userPhotosRef.current ? this.userPhotosRef.current.addNewPhoto : null}/>
-          </Grid>
-          <div className="main-topbar-buffer" />
-          <Grid item sm={3}>
-            <Paper className="main-grid-item">
-              {userIsLoggedIn && (
-                <UserList setTopName={this.setTopName} />
-              )}
-            </Paper>
-          </Grid>
-          <Grid item sm={9}>
+  setTopName = (name) => {
+    this.setState({ topName: name });
+  };
 
+  setUserLoggedIn = async (isLoggedIn, userId) => {
+    this.setState({ userIsLoggedIn: isLoggedIn, loggedInUserId: userId }, () => {
+      if (isLoggedIn) {
+        this.fetchUserList();
+      }
+    });
+  };
+
+  render() {
+    const { userIsLoggedIn, loggedInUserId, userList, topName } = this.state;
+    return (
+      <BrowserRouter>
+        <div>
+          <Grid container spacing={8}>
+            <Grid item xs={12}>
+              <TopBar
+                topName={topName}
+                setTopName={this.setTopName}
+                setUserLoggedIn={this.setUserLoggedIn}
+                userIsLoggedIn={userIsLoggedIn}
+                addNewPhoto={this.userPhotosRef.current ? this.userPhotosRef.current.addNewPhoto : null}
+                fetchUserList={this.fetchUserList}
+              />
+            </Grid>
+            <div className="main-topbar-buffer" />
+            <Grid item sm={3}>
+              <Paper className="main-grid-item">
+                {userIsLoggedIn && (
+                  <UserList setTopName={this.setTopName} userList={userList} />
+                )}
+              </Paper>
+            </Grid>
+            <Grid item sm={9}>
               <Switch>
                 <Route exact path="/photo-share.html" render={() => (
                     userIsLoggedIn ? <div></div> : <Redirect to="/login-register" />
@@ -62,7 +83,9 @@ render() {
                     userIsLoggedIn ? <UserDetail {...props} /> : <Redirect to="/login-register" />
                 )} />
                 <Route path="/photos/:userId" render={(props) => (
-                      userIsLoggedIn ? <UserPhotos {...props} loggedInUserId={loggedInUserId} setTopName={this.setTopName} ref={this.userPhotosRef}/> : <Redirect to="/login-register" />
+                      userIsLoggedIn ? 
+                      <UserPhotos {...props} loggedInUserId={loggedInUserId} setTopName={this.setTopName} fetchUserList={this.fetchUserList} ref={this.userPhotosRef}/> : 
+                      <Redirect to="/login-register" />
                   )} />
                 <Route path="/comments/:userId" render={(props) => (
                   userIsLoggedIn ? <UserComments {...props} /> : <Redirect to="/login-register" />
@@ -71,13 +94,12 @@ render() {
                     userIsLoggedIn ? <Redirect to="/photo-share.html" /> : <LoginRegister setUserLoggedIn={this.setUserLoggedIn} setTopName={this.setTopName} />
                 )} />
               </Switch>
-
+            </Grid>
           </Grid>
-        </Grid>
-      </div>
-    </BrowserRouter>
-  );
-}
+        </div>
+      </BrowserRouter>
+    );
+  }
 }
 
 ReactDOM.render(<PhotoShare />, document.getElementById('photoshareapp'));

@@ -25,6 +25,7 @@ class UserPhotos extends React.Component {
 
   componentDidMount() {
     this.fetchUserPhotos();
+    console.log('Type of fetchUserList:', typeof this.props.fetchUserList);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -101,6 +102,7 @@ class UserPhotos extends React.Component {
     this.setState(prevState => ({
       photos: [...prevState.photos, newPhoto]
     }));
+    this.props.fetchUserList(); // Trigger update in PhotoShare
   };
   deletePhoto = async (photoId) => {
     try {
@@ -109,6 +111,7 @@ class UserPhotos extends React.Component {
         this.setState(prevState => ({
           photos: prevState.photos.filter(photo => photo._id !== photoId),
         }));
+        this.props.fetchUserList(); // Refresh the user list in PhotoShare
       }
     } catch (error) {
       console.error('Error deleting photo:', error);
