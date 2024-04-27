@@ -48,18 +48,17 @@ class UserPhotos extends React.Component {
     const userListUrl = '/user/list';
     const userUrl = `/user/${userId}`;
     const photosUrl = `/photosOfUser/${userId}`;
-
     try {
       const [userListResponse, userResponse, photosResponse] = await Promise.all([
         axios.get(userListUrl),
         axios.get(userUrl),
         axios.get(photosUrl)
       ]);
-
+      const sortedPhotos = photosResponse.data.sort((a, b) => b.likes.length - a.likes.length);
       this.setState({
         userList: userListResponse.data,
         user: userResponse.data,
-        photos: photosResponse.data,
+        photos: sortedPhotos,
         loading: false
       });
     } catch (error) {
