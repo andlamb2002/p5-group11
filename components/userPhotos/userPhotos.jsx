@@ -71,9 +71,10 @@ class UserPhotos extends React.Component {
       console.error('Error fetching user photos:', error);
     }
   }
+  
   handleAddComment = async (event, photoId) => {
     event.preventDefault();
-    const commentText = event.target.elements.commentText.value;
+    const commentText = event.target.elements.commentText.value.trim(); 
     if (!commentText) {
       console.error("Comment text cannot be empty");
       return;
@@ -86,6 +87,7 @@ class UserPhotos extends React.Component {
       this.setState(state => {
         const photos = state.photos.map(photo => {
           if (photo._id === photoId) {
+            this.props.fetchUserList(); 
             return updatedPhoto;
           }
           return photo;
@@ -93,17 +95,18 @@ class UserPhotos extends React.Component {
         return { photos };
       });
 
-      event.target.elements.commentText.value = '';
+      event.target.elements.commentText.value = ''; 
     } catch (error) {
       console.error("Error adding comment:", error);
     }
-  };
+};
   addNewPhoto = (newPhoto) => {
     this.setState(prevState => ({
       photos: [...prevState.photos, newPhoto]
     }));
-    this.props.fetchUserList(); // Trigger update in PhotoShare
+    this.props.fetchUserList(); 
   };
+
   deletePhoto = async (photoId) => {
     try {
       const response = await axios.delete(`/photos/${photoId}`);
@@ -111,12 +114,13 @@ class UserPhotos extends React.Component {
         this.setState(prevState => ({
           photos: prevState.photos.filter(photo => photo._id !== photoId),
         }));
-        this.props.fetchUserList(); // Refresh the user list in PhotoShare
+        this.props.fetchUserList(); 
       }
     } catch (error) {
       console.error('Error deleting photo:', error);
     }
   };
+
   handleLike = async (photoId, action) => {
     try {
       const url = `/photos/${photoId}/${action}`; 

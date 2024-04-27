@@ -191,32 +191,6 @@ app.delete("/photos/:photoId", function (request, response) {
   });
 });
 
-app.delete("/photos/:photoId", function (request, response) {
-  const photoId = request.params.photoId;
-
-  Photo.findById(photoId, function (err, photo) {
-
-    if (photo.user_id.toString() !== request.session.user._id.toString()) {
-      response.status(403).send('You can only delete your own photos.');
-      return;
-    }
-    Photo.findByIdAndRemove(photoId, function (deleteErr) {
-      if (deleteErr) {
-        console.error("Error deleting photo:", deleteErr);
-        response.status(500).send('Internal Server Error');
-        return;
-      }
-      const filePath = path.join(__dirname, 'images', photo.file_name);
-      fs.unlink(filePath, function (unlinkErr) {
-        if (unlinkErr) {
-          console.error("Error deleting photo file:", unlinkErr);
-        }
-        response.status(200).send('Photo deleted successfully');
-      });
-    });
-  });
-});
-
 /**
  * URL /admin/logout - clears user session
  */
@@ -242,7 +216,6 @@ app.get('/check-login', function (request, response) {
       response.send({ loggedIn: false });
   }
 });
-
 
 /**
  * URL /photos/new - adds a new photo for the current user
@@ -611,10 +584,10 @@ app.get("/photosOfUser/:id", function (request, response) {
         return;
       }
       if (photos.length === 0) {
-        response.status(400).send("Photos not found for user with _id:" + request.params.id);
-        return;
+        response.json([]);  
+      } else {
+        response.json(photos);
       }
-      response.json(photos);
     });
 });
 
