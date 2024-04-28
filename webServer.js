@@ -33,12 +33,10 @@
 
 const mongoose = require("mongoose");
 mongoose.Promise = require("bluebird");
-
 const async = require("async");
 const fs = require('fs');
 const express = require("express");
 const app = express();
-
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const multer = require("multer");
@@ -56,6 +54,9 @@ const storage = multer.diskStorage({
 
 const processFormBody = multer({ storage: storage });
 
+// const navigate = useNavigate();
+
+
 app.use(session({secret: "secretKey", resave: false, saveUninitialized: false}));
 app.use(bodyParser.json());
 
@@ -63,6 +64,8 @@ app.use(bodyParser.json());
 const User = require("./schema/user.js");
 const Photo = require("./schema/photo.js");
 const SchemaInfo = require("./schema/schemaInfo.js");
+// const { default: axios } = require("axios");
+// const { isErrored } = require("stream");
 
 // XXX - Your submission should work without this line. Comment out or delete
 // this line for tests and before submission!
@@ -75,6 +78,7 @@ mongoose.connect("mongodb://127.0.0.1/project6", {
 // We have the express static module
 // (http://expressjs.com/en/starter/static-files.html) do all the work for us.
 
+app.use(express.json());
 app.use(express.static(__dirname));
 /*
 function getSessionUserID(request){
@@ -391,8 +395,35 @@ app.post("/user", function (request, response) {
               response.status(500).send();
             });
       }
+  });      
+});
+
+app.delete("/users/:userId", function (request, response) {
+  const userId = request.params.userId;
+  if (userId.toString() !== request.session.user._id.toString()) {
+    response.status(403).send('Unauthorized to delete this Account');
+    return;
+  }
+  User.exists({ _id: userId }, function (err, result) {
+    console.log(err, result);
+    if (err) {
+      console.error("Error in /user", err);
+      response.status(500).send();
+    } else if (result) {
+      User.deleteOne(result, function (dErr, deleteRes) {
+        console.log(dErr, deleteRes);
+        if (err) {
+          console.error("Error deleting user", err);
+          response.status(500).send();
+        }
+        else if (deleteRes) {
+          response.status(200).send("User successfully deleted");
+        }
+      });
+    }
   });
 });
+
 
 app.post('/photos/:id/like', function(request, response) {
   if (!request.session.user) {
@@ -470,6 +501,8 @@ app.post('/photos/:id/unlike', function(request, response) {
  * /test/counts - Returns an object with the counts of the different collections
  *                in JSON format.
  */
+
+
 app.get("/test/:p1", function (request, response) {
   // Express parses the ":p1" from the URL and returns it in the request.params
   // objects.
@@ -500,10 +533,12 @@ app.get("/test/:p1", function (request, response) {
       response.end(JSON.stringify(info[0]));
     });
   } else if (param === "counts") {
+
     // In order to return the counts of all the collections we need to do an
     // async call to each collections. That is tricky to do so we use the async
     // package do the work. We put the collections into array and use async.each
     // to do each .count() query.
+
     const collections = [
       { name: "user", collection: User },
       { name: "photo", collection: Photo },
@@ -620,7 +655,10 @@ app.get("/user/:id/comments", function (request, response) {
 
 /**
  * URL /user/:id - Returns the information for User (id).
+ *
  */
+
+
 app.get("/user/:id", function (request, response) {
   if (!request.session.user) {
     response.status(401).send('Unauthorized - Please log in.');
@@ -636,6 +674,7 @@ app.get("/user/:id", function (request, response) {
     response.json(user);
   });
 });
+
 
 /**
  * URL /photosOfUser/:id - Returns the Photos for User (id).
