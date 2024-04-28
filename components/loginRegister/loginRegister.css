@@ -16,13 +16,14 @@ box-sizing: border-box;
   /* background: #1976d2;  */
 
   width: 420px;
-  background: rgb(160, 160, 249);
+  background: rgb(193, 182, 227);
   border: 2px solid rgba(255, 255, 255, .2);
   box-shadow: 0 0 10px rgba(0, 0, 0, .2);
   backdrop-filter: blur(30px);
-  color: #333;
-  border-radius: 10px;
+  color: black;
+  border-radius: 2rem;
   padding: 30px 40px;
+  height: 30rem;
 
 }
 .wrapper h1 {
@@ -147,13 +148,14 @@ margin: 20px 0 15px;
   
   width: 420px;
   
-  background: rgb(149, 239, 149);
+  background: rgb(183, 199, 230);
   border: 2px solid rgba(255, 255, 255, .2);
   box-shadow: 0 0 10px rgba(0, 0, 0, .2);
   backdrop-filter: blur(30px);
-  color: #333;
-  border-radius: 10px;
+  color: black;
+  border-radius: 2rem;
   padding: 30px 40px;
+  height: 60rem;
 
 }
 

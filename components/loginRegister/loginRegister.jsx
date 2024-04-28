@@ -3,7 +3,7 @@ import {
     Button,
     Box,
     TextField,
-    Alert,
+    Alert, Typography
 } from '@mui/material';
 import './loginRegister.css';
 import axios from 'axios';
@@ -144,7 +144,7 @@ class LoginRegister extends React.Component {
             <div className="login-register-container">
                 <div className='wrapper'>
                     <form>
-                        <h1>Login</h1>
+                    <Typography variant="h4" style={{textAlign: 'center', color: 'Black'}}>Login</Typography>
                         <div className='input-box'>
                             <input type='text'
                                 value={this.state.loginName}
@@ -182,7 +182,7 @@ class LoginRegister extends React.Component {
 
                 <div className="register-box">
                     
-                    <h1>User Registration</h1>
+                    <Typography variant="h4" style={{textAlign: 'center', color: 'Black'}}>User Registration</Typography>
                     <Box component="form" autoComplete="off">
                         <div>
                             <TextField 
