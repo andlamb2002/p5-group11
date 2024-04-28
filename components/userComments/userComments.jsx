@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Typography, Avatar } from '@mui/material';
 
-const userComments = () => {
+const userComments = ({ setTopName }) => {
   const { userId } = useParams();
   const [comments, setComments] = useState([]);
   const [error, setError] = useState("");
@@ -12,6 +12,9 @@ const userComments = () => {
     const fetchComments = async () => {
       try {
         const { data } = await axios.get(`/user/${userId}/comments`);
+
+        const userDetails = await axios.get(`/user/${userId}`);
+        setTopName(`Comments of ${userDetails.data.first_name} ${userDetails.data.last_name}`);
 
         const photoDetails = await Promise.all(
           data.map(comment => axios.get(`/photo/${comment.photoId}`)
@@ -37,7 +40,7 @@ const userComments = () => {
     };
 
     fetchComments();
-  }, [userId]);
+  }, [userId, setTopName]);
 
   return (
     <div>

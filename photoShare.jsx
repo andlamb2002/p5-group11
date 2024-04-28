@@ -89,12 +89,14 @@ class PhotoShare extends React.Component {
                   <Redirect to="/login-register" />
                 )} />
                 <Route path="/photos/:userId" render={(props) => (
-                      userIsLoggedIn ? 
-                      <UserPhotos {...props} loggedInUserId={loggedInUserId} setTopName={this.setTopName} fetchUserList={this.fetchUserList} ref={this.userPhotosRef}/> : 
-                      <Redirect to="/login-register" />
-                  )} />
+                    userIsLoggedIn ? 
+                    <UserPhotos {...props} loggedInUserId={loggedInUserId} setTopName={this.setTopName} fetchUserList={this.fetchUserList} ref={this.userPhotosRef}/> : 
+                    <Redirect to="/login-register" />
+                )} />
                 <Route path="/comments/:userId" render={(props) => (
-                  userIsLoggedIn ? <UserComments {...props} /> : <Redirect to="/login-register" />
+                  userIsLoggedIn ? 
+                  <UserComments {...props} setTopName={this.setTopName} /> : 
+                  <Redirect to="/login-register" />
                 )} />
                 <Route path="/login-register" render={() => (
                     userIsLoggedIn ? <Redirect to="/photo-share.html" /> : <LoginRegister setUserLoggedIn={this.setUserLoggedIn} setTopName={this.setTopName} />
