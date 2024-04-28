@@ -27,21 +27,23 @@ class UserList extends React.Component {
                                     {`${user.first_name} ${user.last_name}`}
                                 </Button>
 
-                                <IconButton
-                                    className="greenphotos"
-                                    style={{
-                                        backgroundColor: 'green',
-                                        color: 'white',
-                                        borderRadius: '100%',
-                                        width: '40px',
-                                        height: '40px',
-                                        position: 'absolute',
-                                        right: '50px',
-                                        bottom: '0'
-                                    }}
-                                >
-                                    {user.photosCount}
-                                </IconButton>
+                                <Link to={`/photos/${user._id}`} style={{ textDecoration: 'none' }}>
+                                    <IconButton
+                                        className="greenphotos"
+                                        style={{
+                                            backgroundColor: 'green',
+                                            color: 'white',
+                                            borderRadius: '100%',
+                                            width: '40px',
+                                            height: '40px',
+                                            position: 'absolute',
+                                            right: '50px',
+                                            bottom: '0'
+                                        }}
+                                    >
+                                        {user.photosCount}
+                                    </IconButton>
+                                </Link>
 
                                 <Link to={`/comments/${user._id}`} style={{ textDecoration: 'none' }}>
                                     <IconButton
