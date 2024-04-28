@@ -32,7 +32,7 @@ const userComments = () => {
         setError("");
       } catch (err) {
         console.error('Error fetching comments:', err);
-        setError("Failed to load comments. Please try again later.");
+        setError("No comments.");
       }
     };
 
@@ -44,7 +44,7 @@ const userComments = () => {
       <Typography variant="h4" component="h1" gutterBottom>User Comments</Typography>
       <br />
       {error ? (
-        <Typography color="error">{error}</Typography>
+        <Typography>{error}</Typography>
       ) : (
         comments.map((comment, index) => (
           <div key={index} style={{ marginBottom: "20px", marginTop: "20px" }}>
