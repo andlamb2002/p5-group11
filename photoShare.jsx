@@ -50,6 +50,10 @@ class PhotoShare extends React.Component {
     });
   };
 
+  handlePhotoAddedFallback = () => {
+    this.fetchUserList();
+  };
+
   render() {
     const { userIsLoggedIn, loggedInUserId, userList, topName } = this.state;
     return (
@@ -62,7 +66,7 @@ class PhotoShare extends React.Component {
                 setTopName={this.setTopName}
                 setUserLoggedIn={this.setUserLoggedIn}
                 userIsLoggedIn={userIsLoggedIn}
-                addNewPhoto={this.userPhotosRef.current ? this.userPhotosRef.current.addNewPhoto : null}
+                addNewPhoto={this.userPhotosRef.current ? this.userPhotosRef.current.addNewPhoto : this.handlePhotoAddedFallback}
                 fetchUserList={this.fetchUserList}
               />
             </Grid>
