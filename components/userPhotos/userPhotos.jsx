@@ -220,13 +220,15 @@ class UserPhotos extends React.Component {
 
                       </Box>
                       <CardContent>
-                          <IconButton
-                          onClick={() => this.deletePhoto(photo._id)}
-                          style={{ float: 'right' }}
-                          aria-label="Delete photo"
-                      >
-                        <DeleteIcon />
-                          </IconButton>
+                          {this.props.loggedInUserId === this.props.match.params.userId && (
+                            <IconButton
+                              onClick={() => this.deletePhoto(photo._id)}
+                              style={{ float: 'right' }}
+                              aria-label="Delete photo"
+                            >
+                            <DeleteIcon />
+                            </IconButton>
+                          )}
                       <Typography variant="h6" gutterBottom>
                               Comments:
                       </Typography>
@@ -244,10 +246,12 @@ class UserPhotos extends React.Component {
                                           <Typography variant="body1" style={{ marginTop: '4px' }}>
                                               {comment.comment}
                                           </Typography>
-                                          <IconButton onClick={() => this.handleDeleteComment(photo._id, comment._id)}
-                                                 aria-label="Delete comment">
-                                                <DeleteIcon />
-                                          </IconButton>
+                                          {comment.user_id === this.props.loggedInUserId && (
+                                            <IconButton onClick={() => this.handleDeleteComment(photo._id, comment._id)}
+                                                  aria-label="Delete comment">
+                                                  <DeleteIcon />
+                                            </IconButton>
+                                          )}
                                       </div>
                                   ) : null;
                               })
@@ -288,7 +292,7 @@ class UserPhotos extends React.Component {
               ))
           )}
       </div>
-  );
+    );
   }
 }
 
