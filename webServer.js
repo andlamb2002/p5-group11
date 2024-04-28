@@ -228,32 +228,6 @@ app.delete("/photos/:photoId/comments/:commentId", function (request, response) 
   });
 });
 
-
-app.delete("/photos/:photoId", function (request, response) {
-  const photoId = request.params.photoId;
-
-  Photo.findById(photoId, function (err, photo) {
-
-    if (photo.user_id.toString() !== request.session.user._id.toString()) {
-      response.status(403).send('You can only delete your own photos.');
-      return;
-    }
-    Photo.findByIdAndRemove(photoId, function (deleteErr) {
-      if (deleteErr) {
-        console.error("Error deleting photo:", deleteErr);
-        response.status(500).send('Internal Server Error');
-        return;
-      }
-      const filePath = path.join(__dirname, 'images', photo.file_name);
-      fs.unlink(filePath, function (unlinkErr) {
-        if (unlinkErr) {
-          console.error("Error deleting photo file:", unlinkErr);
-        }
-        response.status(200).send('Photo deleted successfully');
-      });
-    });
-  });
-});
 app.delete("/photos/:photoId/comments/:commentId", function (request, response) {
   if (!request.session.user) {
     response.status(401).send('Unauthorized - Please log in.');
@@ -691,6 +665,24 @@ app.get("/photosOfUser/:id", function (request, response) {
         response.json(photos);
       }
     });
+});
+
+app.get("/photo/:photoId", function (request, response) {
+  if (!request.session.user) {
+    response.status(401).send('Unauthorized - Please log in.');
+    return;
+  }
+
+  Photo.findById(request.params.photoId, function(err, photo) {
+    if (err) {
+      console.error("Error finding photo:", err);
+      response.status(500).send();
+    } else if (!photo) {
+      response.status(404).send('Photo not found');
+    } else {
+      response.json(photo);
+    }
+  });
 });
 
 app.get(/^(?!.*\.js$).*$/, function(req, res) {

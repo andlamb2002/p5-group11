@@ -1,18 +1,34 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Typography, Avatar } from '@mui/material';
 
 const userComments = () => {
   const { userId } = useParams();
-  const [comments, setComments] = React.useState([]);
-  const [error, setError] = React.useState("");
+  const [comments, setComments] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`/user/${userId}/comments`);
-        setComments(response.data);
+        const { data } = await axios.get(`/user/${userId}/comments`);
+
+        const photoDetails = await Promise.all(
+          data.map(comment => axios.get(`/photo/${comment.photoId}`)
+              .then(res => res.data)
+              .catch(err => {
+                console.error(`Failed to fetch photo details for photo ID ${comment.photoId}:`, err);
+                return null; 
+              })
+          )
+        );
+
+        const commentsWithPhotoUser = data.map((comment, index) => ({
+          ...comment,
+          photoUser: photoDetails[index] ? photoDetails[index].user_id : 'unknown'  
+        }));
+
+        setComments(commentsWithPhotoUser);
         setError("");
       } catch (err) {
         console.error('Error fetching comments:', err);
@@ -28,26 +44,23 @@ const userComments = () => {
       <Typography variant="h4" component="h1" gutterBottom>User Comments</Typography>
       <br />
       {error ? (
-        <p>{error}</p>
+        <Typography color="error">{error}</Typography>
       ) : (
         comments.map((comment, index) => (
-          <div key={index} style={{ marginBottom: "20px" , marginTop: "20px"}}>
-            <Link to={`/photos/${userId}`}>
+          <div key={index} style={{ marginBottom: "20px", marginTop: "20px" }}>
+            <Link to={`/photos/${comment.photoUser}`}>
               <Avatar
                 src={`/images/${comment.fileName}`}
                 alt={`Thumbnail of ${comment.fileName}`}
-                
               />
             </Link>
-
-            <Link to={`/photos/${userId}`} style={{ textDecoration: 'none', color: 'inherit', fontFamily: 'Roboto', marginBottom: "20px" }}>
-              <div style={{ marginTop: "20px" , padding: "20px", border: "black", background: "#ededed", borderRadius: "10%", width: "60%"}}>
-                <p style={{ color: 'grey'}} >Date: {new Date(comment.dateTime).toLocaleString()}</p>
+            <Link to={`/photos/${comment.photoUser}`} style={{ textDecoration: 'none', color: 'inherit', fontFamily: 'Roboto', marginBottom: "20px" }}>
+              <div style={{ marginTop: "20px", padding: "20px", background: "#ededed", borderRadius: "10%", width: "60%" }}>
+                <Typography variant="body2" style={{ color: 'grey' }}>Date: {new Date(comment.dateTime).toLocaleString()}</Typography>
                 <br />
-                <p style={{ color: 'black' }} >{comment.commentText}</p>
+                <Typography variant="body1">{comment.commentText}</Typography>
               </div>
             </Link>
-
           </div>
         ))
       )}
