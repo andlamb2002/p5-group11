@@ -3,20 +3,21 @@ Project 8 - Submission Form
 Story number and name: 5 - Deleting Comments, Photos, and Users
 Story points: 4
 Brief description to see the story in action:
+- There is a delete button for deleting photos, comments, and user accounts. Deleting these will update the MongoDB database. We ensured that a user can only delete their own info; not any other user's info. Deleting your own account shows an alert message before deletion.
 
 Story number and name: 6 - Photo Like Votes
 Story points: 4
 Brief description to see the story in action:
+- All photos have a like button, which each user can toggle on or off. Next to the button is the number of likes the photo has across all accounts. Every user's photos page is sorted in reverse chronological order by default. When you like a photo and refresh the page, the photos with the most likes show up at the top.
 
 Story number and name: 11 - Count Bubbles
 Story points: 4
 Brief description to see the story in action:
-- The Green and Red Buttons represent the number of Photos and Number of Comments the user has authored Respectively. If the Red button is pushed it takes us to a new Comments Component, Where a thumbnail of the photo on which the comment is made and Comments made by that user appears. If clicked on either photo or comment, it goes to photos component of that perticular user photos. The Green buttion is an addition, if Pushed it takes us to photos component of that perticular user.
+- The Green and Red Buttons represent the number of Photos and Number of Comments the user has authored Respectively. If the Red button is pushed it takes us to a new Comments Component, where a thumbnail of the photo on which the comment is made and Comments made by that user appears. If clicked on either photo or comment, it goes to photos component of that perticular user photos. The Green buttion is an addition, if Pushed it takes us to photos component of that perticular user.
 
 Total Story Points: 12
 
-Marketing Video URL (ensure permissions are set to public viewing):
-- 
+Marketing Video URL (ensure permissions are set to public viewing): https://drive.google.com/file/d/1g2qKqMux974YYkJSqXbhW8Oftaf5IzTy/view?usp=sharing
 
 Is it OK if we post your Marketing Video URL on the class discussion forum?
 [Yes/No]
