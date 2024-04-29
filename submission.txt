@@ -11,13 +11,17 @@ Brief description to see the story in action:
 Story number and name: 11 - Count Bubbles
 Story points: 4
 Brief description to see the story in action:
+- The Green and Red Buttons represent the number of Photos and Number of Comments the user has authored Respectively. If the Red button is pushed it takes us to a new Comments Component, Where a thumbnail of the photo on which the comment is made and Comments made by that user appears. If clicked on either photo or comment, it goes to photos component of that perticular user photos. The Green buttion is an addition, if Pushed it takes us to photos component of that perticular user.
 
 Total Story Points: 12
 
 Marketing Video URL (ensure permissions are set to public viewing):
+- 
 
 Is it OK if we post your Marketing Video URL on the class discussion forum?
 [Yes/No]
+- Yes
 
 Any special instructions for grading (it should be easy for someone to run your
 app from a new machine):
+- None
